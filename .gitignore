@@ -1,0 +1,35 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+
+# Libraries
+*.lib
+*.a
+
+# Shared objects (inc. Windows DLLs) + Compiled Dynamic libraries
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+# Executables
+*.exe
+*.out
+*.app
+
+# CodeBlocks artefacts
+*.depend
+*.layout
+
+# MS Office trash
+~*.tmp
+~*.docx
+
+# Visual Studio 2015 cache
+.vs/
