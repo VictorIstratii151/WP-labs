@@ -12,10 +12,11 @@ COLORREF g_rgbBackground = RGB(0, 0, 255);
 void DrawClientMessage(HDC hdc, RECT* prc, HFONT hf)
 {
 	char Sentence[] = "Random sentence on the screen.";
+	char simpleSentence[] = "Regular sentence";
 	char szTitle[] = "Done with Pride and Prejudice by Victor Istratii.";
 	HFONT hfOld = (HFONT)SelectObject(hdc, hf);
 	DrawText(hdc, szTitle, -1, prc, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
-
+	DrawText(hdc, simpleSentence, -1, prc, DT_WORDBREAK | DT_VCENTER | DT_CENTER);
 	SetBkColor(hdc, g_rgbBackground);
 	SetTextColor(hdc, g_rgbText);
 	DrawText(hdc, Sentence, -1, prc, DT_WORDBREAK);
