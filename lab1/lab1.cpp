@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <stdlib.h>
 
 #define IDC_BUTTON1 1
 #define IDC_BUTTON2 2
@@ -8,6 +9,14 @@ HFONT g_hfFont = NULL;
 BOOL g_bOpaque = TRUE;
 COLORREF g_rgbText = RGB(255, 0, 0);
 COLORREF g_rgbBackground = RGB(0, 0, 255);
+COLORREF bg;
+
+void changeBg(HWND hwnd)
+{
+	bg = 0x00FF00FF;
+	InvalidateRect(hwnd, NULL, TRUE);
+}
+
 
 void DrawClientMessage(HDC hdc, RECT* prc, HFONT hf)
 {
@@ -53,6 +62,23 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			SendMessage(pressMe, WM_SETFONT, (WPARAM)defaultFont, MAKELPARAM(FALSE, 0));
 		}
 		break;
+
+		case WM_ERASEBKGND:
+		{
+			HPEN pen;
+			HBRUSH brush;
+			RECT rect;
+
+			pen = CreatePen(PS_SOLID, 1, bg);
+			brush = CreateSolidBrush(bg);
+			SelectObject((HDC)wParam, pen);
+			SelectObject((HDC)wParam, brush);
+
+			GetClientRect(hwnd, &rect);
+
+			Rectangle((HDC)wParam, rect.left, rect.top, rect.right, rect.bottom);
+		}
+		break;
 		
 		case WM_COMMAND:
 		{
@@ -72,8 +98,44 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			}
 		}
 
+		case WM_SYSCOMMAND:
+		{
+			switch (wParam)
+			{
+			case SC_MAXIMIZE:
+				{
+					GetClientRect(hwnd, &rcClient);
+					int width = rcClient.right - rcClient.left;
+					int height = rcClient.bottom - rcClient.top;
+					HWND SAS = CreateWindowEx(NULL, "BUTTON", "Geeez!!", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+						rand() % (width + 1 - 0) + 0, rand() % (height + 1 - 0) + 0, 75, 30, hwnd, (HMENU)IDC_BUTTON1, GetModuleHandle(NULL), NULL);
+				}
+				break;
+
+			case SC_MINIMIZE:
+				{
+					HBRUSH brush = CreateSolidBrush(RGB(0, 255, 0));
+					SetClassLongPtr(hwnd, GCLP_HBRBACKGROUND, (LONG)brush);
+					changeBg(hwnd);
+				}
+				break;
+
+			default:
+				{
+					return DefWindowProc(hwnd, msg, wParam, lParam);
+				}
+			}
+		}
+		break;
+
 		case WM_CLOSE:
+		{
+			/*GetClientRect(hwnd, &rcClient);
+			int width = rcClient.right - rcClient.left;
+			int height = rcClient.bottom - rcClient.top;
+			MoveWindow(hwnd, 50, 120, width, height, TRUE);*/
 			DestroyWindow(hwnd);
+		}
 		break;
 
 		case WM_DESTROY:
