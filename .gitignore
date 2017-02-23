@@ -31,5 +31,7 @@
 ~*.tmp
 ~*.docx
 
-# Visual Studio 2015 cache
-.vs/
+# Visual Studio 2015 stuff
+*.VC.opendb
+*.VC.db
+*.vs/

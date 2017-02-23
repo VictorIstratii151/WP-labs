@@ -1,37 +1,96 @@
 #include <windows.h>
 
-const char g_szClassName[] = "myWindowClass";
+#define IDC_BUTTON1 1
+#define IDC_BUTTON2 2
 
-void DrawClientMessage(HDC hdc, RECT* prc)
+const char g_szClassName[] = "myWindowClass";
+HFONT g_hfFont = NULL;
+BOOL g_bOpaque = TRUE;
+COLORREF g_rgbText = RGB(255, 0, 0);
+COLORREF g_rgbBackground = RGB(0, 0, 255);
+
+void DrawClientMessage(HDC hdc, RECT* prc, HFONT hf)
 {
+	char Sentence[] = "Random sentence on the screen.";
 	char szTitle[] = "Done with Pride and Prejudice by Victor Istratii.";
+	HFONT hfOld = (HFONT)SelectObject(hdc, hf);
 	DrawText(hdc, szTitle, -1, prc, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+
+	SetBkColor(hdc, g_rgbBackground);
+	SetTextColor(hdc, g_rgbText);
+	DrawText(hdc, Sentence, -1, prc, DT_WORDBREAK);
+	SelectObject(hdc, hfOld);
 }
 
 // Step 4: the Window Procedure
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+	static HWND blueButton, pressMe;
+	HBRUSH redBrush = CreateSolidBrush(RGB(255, 0, 0));
+	HBRUSH blueBrush = CreateSolidBrush(RGB(0, 0, 255));
+	LPDRAWITEMSTRUCT pdis;
+	RECT rcClient;
+	PAINTSTRUCT ps;
+	HDC hdc;
+	HFONT g_hfFont = NULL;
 	switch (msg)
 	{
+		case WM_CREATE:
+		{
+			g_hfFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
+			GetClientRect(hwnd, &rcClient);
+			int width = rcClient.right - rcClient.left;
+			int height = rcClient.bottom - rcClient.top;
+			pressMe = CreateWindowEx(NULL, "BUTTON", "Press me!", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+				width/ 2, height / 5, 75, 30, hwnd, (HMENU)IDC_BUTTON1, GetModuleHandle(NULL), NULL);
+
+			blueButton = CreateWindowEx(NULL, "BUTTON", "Don't press me!", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+				width / 4, height / 5, 120, 30, hwnd, (HMENU)IDC_BUTTON2, GetModuleHandle(NULL), NULL);
+				//(HINSTANCE)GetWindowLong(hwnd, GWL_HINSTANCE), NULL);
+
+			HGDIOBJ defaultFont = GetStockObject(DEFAULT_GUI_FONT);
+			SendMessage(pressMe, WM_SETFONT, (WPARAM)defaultFont, MAKELPARAM(FALSE, 0));
+		}
+		break;
+		
+		case WM_COMMAND:
+		{
+			switch (LOWORD(wParam))
+			{
+				case IDC_BUTTON1:
+				{
+					MessageBox(hwnd, "Thanks for clicking!", "Button clicked.", MB_OK | MB_ICONINFORMATION);
+				}
+				break;
+
+				case IDC_BUTTON2:
+				{
+					MessageBox(hwnd, "I TOLD YOU NOT TO CLICK!!1", "WHY WOULD YOU DO THIS?!", MB_OK | MB_ICONINFORMATION);
+				}
+				break;
+			}
+		}
+
 		case WM_CLOSE:
 			DestroyWindow(hwnd);
 		break;
+
 		case WM_DESTROY:
 			PostQuitMessage(0);
 		break;
+
 		case WM_PAINT:
 		{
-			RECT rcClient;
-			PAINTSTRUCT ps;
-			HDC hdc = BeginPaint(hwnd, &ps);
+			hdc = BeginPaint(hwnd, &ps);
 
 			GetClientRect(hwnd, &rcClient);
 
-			DrawClientMessage(hdc, &rcClient);
+			DrawClientMessage(hdc, &rcClient, g_hfFont);
 
 			EndPaint(hwnd, &ps);
 		}
 		break;
+
 		default:
 			return DefWindowProc(hwnd, msg, wParam, lParam);
 	}
@@ -72,7 +131,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		g_szClassName,
 		"The title of my window",
 		WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT, CW_USEDEFAULT, 240, 120,
+		CW_USEDEFAULT, CW_USEDEFAULT, 640, 480,
 		NULL, NULL, hInstance, NULL);
 
 	if (hwnd == NULL)
