@@ -1,4 +1,4 @@
-# Windows Programming Laboratory Work #1
+# Windows Programming Laboratory Work #2 (treb de redactat oleaca)
 [Initial version](https://github.com/TUM-FAF/WP/tree/master/lab%231).
 
 ## Title
