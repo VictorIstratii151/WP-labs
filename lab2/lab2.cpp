@@ -1,10 +1,15 @@
 #include <windows.h>
 
+#define IDC_BUTTON 1
+
 const char g_szClassName[] = "myWindowClass";
 
 // Step 4: the Window Procedure
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+	PAINTSTRUCT ps;
+	RECT rcClient;
+
 	switch (msg)
 	{
 	case WM_CLOSE:
