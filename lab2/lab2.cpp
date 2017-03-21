@@ -42,7 +42,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_CREATE:
 	{
 		RegisterHotKey(hwnd, HK_CLOSE, MOD_CONTROL, 0x58);
-		//RegisterHotKey(hwnd, HK_HELP, MOD_CONTROL, 0x49);
+		RegisterHotKey(hwnd, HK_MINIMIZE, MOD_CONTROL, 0x4D);
+		RegisterHotKey(hwnd, HK_RESTORE, MOD_CONTROL, 0x52);
 		hdc = BeginPaint(hwnd, &ps);
 		GetClientRect(hwnd, &rcClient);
 		int width = rcClient.right - rcClient.left;
@@ -79,6 +80,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			case HK_CLOSE:
 			{
 				PostQuitMessage(0);
+			}
+			break;
+
+			case HK_MINIMIZE:
+			{
+				ShowWindow(hwnd, SW_MINIMIZE);
+			}
+			break;
+
+			case HK_RESTORE:
+			{
+				ShowWindow(hwnd, SW_RESTORE);
 			}
 			break;
 
