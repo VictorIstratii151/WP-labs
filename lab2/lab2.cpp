@@ -41,15 +41,29 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_CREATE:
 	{
+		HFONT hfDefault;
+		HWND hEdit;
+
 		RegisterHotKey(hwnd, HK_CLOSE, MOD_CONTROL, 0x58);
 		RegisterHotKey(hwnd, HK_MINIMIZE, MOD_CONTROL, 0x4D);
 		RegisterHotKey(hwnd, HK_RESTORE, MOD_CONTROL, 0x52);
+
 		hdc = BeginPaint(hwnd, &ps);
 		GetClientRect(hwnd, &rcClient);
 		int width = rcClient.right - rcClient.left;
 		int height = rcClient.bottom - rcClient.top;
 		Button1 = CreateWindowEx(NULL, "BUTTON", "Hi", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, width / 4, height / 4, 70, 30, hwnd, (HMENU)IDC_BUTTON1, GetModuleHandle(NULL), NULL);
 		EndPaint(hwnd, &ps);
+
+		hEdit = CreateWindowEx(WS_EX_CLIENTEDGE, "EDIT", "", WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_HSCROLL | ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL,
+			0, 0, 100, 100, hwnd, (HMENU)IDC_MAIN_EDIT, GetModuleHandle(NULL), NULL);
+		if (hEdit == NULL)
+		{
+			MessageBox(hwnd, "Could not create edit box.", "Error", MB_OK | MB_ICONERROR);
+		}
+
+		hfDefault = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
+		SendMessage(hEdit, WM_SETFONT, (WPARAM)hfDefault, MAKELPARAM(FALSE, 0));
 	}
 	break;
 	

@@ -3,3 +3,4 @@
 #define HK_CLOSE 2
 #define HK_MINIMIZE 3
 #define HK_RESTORE 4
+#define IDC_MAIN_EDIT 5
