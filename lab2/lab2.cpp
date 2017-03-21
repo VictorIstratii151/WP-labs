@@ -48,13 +48,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		RegisterHotKey(hwnd, HK_MINIMIZE, MOD_CONTROL, 0x4D);
 		RegisterHotKey(hwnd, HK_RESTORE, MOD_CONTROL, 0x52);
 
-		hdc = BeginPaint(hwnd, &ps);
-		GetClientRect(hwnd, &rcClient);
-		int width = rcClient.right - rcClient.left;
-		int height = rcClient.bottom - rcClient.top;
-		Button1 = CreateWindowEx(NULL, "BUTTON", "Hi", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, width / 4, height / 4, 70, 30, hwnd, (HMENU)IDC_BUTTON1, GetModuleHandle(NULL), NULL);
-		EndPaint(hwnd, &ps);
-
 		hEdit = CreateWindowEx(WS_EX_CLIENTEDGE, "EDIT", "", WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_HSCROLL | ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL,
 			0, 0, 100, 100, hwnd, (HMENU)IDC_MAIN_EDIT, GetModuleHandle(NULL), NULL);
 		if (hEdit == NULL)
@@ -64,6 +57,23 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 		hfDefault = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
 		SendMessage(hEdit, WM_SETFONT, (WPARAM)hfDefault, MAKELPARAM(FALSE, 0));
+
+		hdc = BeginPaint(hwnd, &ps);
+		GetClientRect(hwnd, &rcClient);
+		int width = rcClient.right - rcClient.left;
+		int height = rcClient.bottom - rcClient.top;
+		Button1 = CreateWindowEx(NULL, "BUTTON", "Hi", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, width / 4, height / 4, 70, 30, hwnd, (HMENU)IDC_BUTTON1, GetModuleHandle(NULL), NULL);
+		EndPaint(hwnd, &ps);
+	}
+	break;
+
+	case WM_SIZE:
+	{
+		HWND hEdit;
+		GetClientRect(hwnd, &rcClient);
+
+		hEdit = GetDlgItem(hwnd, IDC_MAIN_EDIT);
+		SetWindowPos(hEdit, NULL, 0, 0, rcClient.right / 2, rcClient.bottom / 2, SWP_NOZORDER);
 	}
 	break;
 	
@@ -168,7 +178,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		g_szClassName,
 		"The title of my window",
 		WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT, CW_USEDEFAULT, 240, 120,
+		CW_USEDEFAULT, CW_USEDEFAULT, 640, 480,
 		NULL, NULL, hInstance, NULL);
 
 	if (hwnd == NULL)
