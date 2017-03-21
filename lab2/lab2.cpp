@@ -44,6 +44,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		HFONT hfDefault;
 		HWND hEdit;
 
+		hdc = BeginPaint(hwnd, &ps);
+		GetClientRect(hwnd, &rcClient);
+		int width = rcClient.right - rcClient.left;
+		int height = rcClient.bottom - rcClient.top;
+		Button1 = CreateWindowEx(NULL, "BUTTON", "Hi", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 3 * (width / 4), height / 4, 70, 30, hwnd, (HMENU)IDC_BUTTON1, GetModuleHandle(NULL), NULL);
+		EndPaint(hwnd, &ps);
+
 		RegisterHotKey(hwnd, HK_CLOSE, MOD_CONTROL, 0x58);
 		RegisterHotKey(hwnd, HK_MINIMIZE, MOD_CONTROL, 0x4D);
 		RegisterHotKey(hwnd, HK_RESTORE, MOD_CONTROL, 0x52);
@@ -57,13 +64,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 		hfDefault = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
 		SendMessage(hEdit, WM_SETFONT, (WPARAM)hfDefault, MAKELPARAM(FALSE, 0));
-
-		hdc = BeginPaint(hwnd, &ps);
-		GetClientRect(hwnd, &rcClient);
-		int width = rcClient.right - rcClient.left;
-		int height = rcClient.bottom - rcClient.top;
-		Button1 = CreateWindowEx(NULL, "BUTTON", "Hi", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, width / 4, height / 4, 70, 30, hwnd, (HMENU)IDC_BUTTON1, GetModuleHandle(NULL), NULL);
-		EndPaint(hwnd, &ps);
 	}
 	break;
 
@@ -91,7 +91,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		GetClientRect(hwnd, &rcClient);
 		int width = rcClient.right - rcClient.left;
 		int height = rcClient.bottom - rcClient.top;
-		MoveWindow(Button1, width / 4, height / 4, 70, 30, TRUE);
+		MoveWindow(Button1, 3 * (width / 4), height / 4, 70, 30, TRUE);
 		EndPaint(hwnd, &ps);
 
 	}
