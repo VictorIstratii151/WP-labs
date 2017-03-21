@@ -41,7 +41,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_CREATE:
 	{
-		//RegisterHotKey(hwnd, HK_EXIT, MOD_CONTROL, 0x57);
+		RegisterHotKey(hwnd, HK_CLOSE, MOD_CONTROL, 0x58);
 		//RegisterHotKey(hwnd, HK_HELP, MOD_CONTROL, 0x49);
 		hdc = BeginPaint(hwnd, &ps);
 		GetClientRect(hwnd, &rcClient);
@@ -69,6 +69,22 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		MoveWindow(Button1, width / 4, height / 4, 70, 30, TRUE);
 		EndPaint(hwnd, &ps);
 
+	}
+	break;
+
+	case WM_HOTKEY:
+	{
+		switch (wParam)
+		{
+			case HK_CLOSE:
+			{
+				PostQuitMessage(0);
+			}
+			break;
+
+			default:
+				break;
+		}
 	}
 	break;
 
