@@ -1,11 +1,17 @@
 #include <windows.h>
+#include "resource.h"
 
-#define IDC_BUTTON1 1
+
 
 
 const char g_szClassName[] = "myWindowClass";
 HWND Button1;
 
+
+bool IsKeyPressed(UINT nVirtKey)
+{
+	return GetKeyState(nVirtKey) < 0 ? true : false;
+}
 
 int DisplayDialog()
 {
@@ -35,6 +41,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_CREATE:
 	{
+		//RegisterHotKey(hwnd, HK_EXIT, MOD_CONTROL, 0x57);
+		//RegisterHotKey(hwnd, HK_HELP, MOD_CONTROL, 0x49);
 		hdc = BeginPaint(hwnd, &ps);
 		GetClientRect(hwnd, &rcClient);
 		int width = rcClient.right - rcClient.left;
