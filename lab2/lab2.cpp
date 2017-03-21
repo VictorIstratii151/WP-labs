@@ -6,6 +6,24 @@
 const char g_szClassName[] = "myWindowClass";
 HWND Button1;
 
+
+int DisplayDialog()
+{
+	int msgboxID = MessageBox(
+		NULL,
+		"Do you like me?",
+		"Hey",
+		MB_ICONQUESTION | MB_YESNO
+	);
+
+	if (msgboxID == IDYES)
+	{
+		// TODO: add code
+	}
+
+	return msgboxID;
+}
+
 // Step 4: the Window Procedure
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -43,6 +61,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		MoveWindow(Button1, width / 4, height / 4, 70, 30, TRUE);
 		EndPaint(hwnd, &ps);
 
+	}
+	break;
+
+	case WM_COMMAND:
+	{
+		switch (LOWORD(wParam))
+		{
+			case IDC_BUTTON1:
+			{
+				DisplayDialog();
+			}
+			break;
+		}
 	}
 	break;
 
