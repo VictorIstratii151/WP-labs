@@ -13,6 +13,32 @@ bool IsKeyPressed(UINT nVirtKey)
 	return GetKeyState(nVirtKey) < 0 ? true : false;
 }
 
+void PaintBg(HWND hwnd) {
+
+	PAINTSTRUCT ps;
+	RECT r;
+	static int a, b, c, textColor = 0;
+	static bool bgFlag;
+
+	GetClientRect(hwnd, &r);
+
+	if (r.bottom == 0)
+		return;
+
+	HDC hdc = BeginPaint(hwnd, &ps);
+	a = rand() % 255 + 1;
+	b = rand() % 255 + 1;
+	c = rand() % 255 + 1;
+	bgFlag = true;
+	if (bgFlag == true)
+	{
+		SetClassLong(hwnd, GCL_HBRBACKGROUND, (LONG)CreateSolidBrush(RGB(a, b, c)));
+	}
+	InvalidateRect(hwnd, NULL, TRUE);
+
+	EndPaint(hwnd, &ps);
+}
+
 int DisplayDialog()
 {
 	int msgboxID = MessageBox(
@@ -36,11 +62,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	PAINTSTRUCT ps;
 	RECT rcClient;
 	HDC hdc;
-	HWND bgScrollBar;
+	static HWND bgScrollBar;
 
-	int xPos, xMin, xMax;
-
-	int r, g, b = 0;
+	static int xPos, xMin, xMax;
 
 	switch (msg)
 	{
@@ -54,6 +78,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		int width = rcClient.right - rcClient.left;
 		int height = rcClient.bottom - rcClient.top;
 		Button1 = CreateWindowEx(NULL, "BUTTON", "Hi", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 3 * (width / 4), height / 4, 70, 30, hwnd, (HMENU)IDC_BUTTON1, GetModuleHandle(NULL), NULL);
+		bgScrollBar = CreateWindowEx(NULL, "SCROLLBAR", "", WS_VISIBLE | WS_CHILD | SBS_HORZ, width / 2, 0, 220, 25, hwnd, (HMENU)IDC_BG_SCROLL, GetModuleHandle(NULL), NULL);
 		EndPaint(hwnd, &ps);
 
 		RegisterHotKey(hwnd, HK_CLOSE, MOD_CONTROL, 0x58);
@@ -70,10 +95,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		hfDefault = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
 		SendMessage(hEdit, WM_SETFONT, (WPARAM)hfDefault, MAKELPARAM(FALSE, 0));
 
-		bgScrollBar = CreateWindowEx(NULL, "SCROLLBAR", "", WS_VISIBLE | WS_CHILD | SBS_HORZ, 0, 320, 220, 25, hwnd, (HMENU)IDC_BG_SCROLL, GetModuleHandle(NULL), NULL);
 		xPos = 0;
 		xMin = 0;
 		xMax = 255;
+
+		SetScrollRange(bgScrollBar, SB_CTL, xMin, xMax, FALSE);
+		SetScrollPos(bgScrollBar, SB_CTL, xPos, TRUE);
 	}
 	break;
 
@@ -84,6 +111,87 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 		hEdit = GetDlgItem(hwnd, IDC_MAIN_EDIT);
 		SetWindowPos(hEdit, NULL, 0, 0, rcClient.right / 2, rcClient.bottom / 2, SWP_NOZORDER);
+	}
+	break;
+
+	case WM_HSCROLL:
+	{
+		if ((HWND)lParam == bgScrollBar)
+		{
+			switch (LOWORD(wParam))
+			{
+				case SB_LINELEFT:
+				{
+					xPos -= 1;
+					PaintBg(hwnd);
+				}
+				break;
+
+				case SB_LINERIGHT:
+				{
+					xPos += 1;
+					PaintBg(hwnd);
+				}
+				break;
+
+				case SB_PAGELEFT:
+				{
+					xPos -= 10;
+					PaintBg(hwnd);
+				}
+				break;
+
+				case SB_PAGERIGHT:
+				{
+					xPos += 10;
+					PaintBg(hwnd);
+				}
+				break;
+
+				case SB_THUMBPOSITION:
+				{
+					PaintBg(hwnd);
+				}
+				break;
+
+				case SB_TOP:
+				{
+					xPos = xMin;
+					PaintBg(hwnd);
+				}
+				break;
+
+				case SB_BOTTOM:
+				{
+					xPos = xMax;
+					PaintBg(hwnd);
+				}
+				break;
+
+				case SB_THUMBTRACK:
+				{
+					xPos = HIWORD(wParam);
+					PaintBg(hwnd);
+				}
+				break;
+
+				default:
+					break;
+			}
+
+			SetScrollPos(bgScrollBar, SB_CTL, xPos, TRUE);
+			if (xPos == xMax)
+			{
+				PaintBg(hwnd);
+				EnableScrollBar(bgScrollBar, SB_CTL, ESB_DISABLE_RIGHT);
+			}
+
+			if (xPos == xMin)
+			{
+				PaintBg(hwnd);
+				EnableScrollBar(bgScrollBar, SB_CTL, ESB_DISABLE_LEFT);
+			}
+		}
 	}
 	break;
 	
