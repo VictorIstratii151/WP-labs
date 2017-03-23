@@ -36,6 +36,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	PAINTSTRUCT ps;
 	RECT rcClient;
 	HDC hdc;
+	HWND bgScrollBar;
+
+	int xPos, xMin, xMax;
+
+	int r, g, b = 0;
 
 	switch (msg)
 	{
@@ -64,6 +69,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 		hfDefault = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
 		SendMessage(hEdit, WM_SETFONT, (WPARAM)hfDefault, MAKELPARAM(FALSE, 0));
+
+		bgScrollBar = CreateWindowEx(NULL, "SCROLLBAR", "", WS_VISIBLE | WS_CHILD | SBS_HORZ, 0, 320, 220, 25, hwnd, (HMENU)IDC_BG_SCROLL, GetModuleHandle(NULL), NULL);
+		xPos = 0;
+		xMin = 0;
+		xMax = 255;
 	}
 	break;
 
