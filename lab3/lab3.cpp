@@ -13,21 +13,58 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_PAINT:
 	{
+		HPEN hPenOld;
+		static int a, b, c, textColor = 0;
+
+		GetClientRect(hwnd, &rcClient);
+
 		hdc = BeginPaint(hwnd, &ps);
 
-		HPEN hPenOld;
 
-		//Draw a red line
-		HPEN hLinePen;
-		COLORREF qLineColor = RGB(255, 0, 0);
-		hLinePen = CreatePen(PS_SOLID, 7, qLineColor);
-		hPenOld = (HPEN)SelectObject(hdc, hLinePen);
+		int width = rcClient.right - rcClient.left;
+		int height = rcClient.bottom - rcClient.top;
+
+		for (int i = 0; i < 5; i++)
+		{
+			a = rand() % 255 + 1;
+			b = rand() % 255 + 1;
+			c = rand() % 255 + 1;
+
+			HPEN hLinePen;
+			COLORREF qRandomColor = RGB(a, b, c);
+			hLinePen = CreatePen(PS_SOLID, rand() % 20 + 1, qRandomColor);
+			hPenOld = (HPEN)SelectObject(hdc, hLinePen);
+
+			MoveToEx(hdc, rand() % width, rand() % height, NULL);
+			LineTo(hdc, rand() % width, rand() % height);
+
+			SelectObject(hdc, hPenOld);
+			DeleteObject(hLinePen);
+		}
+
+		/*//Draw a red line
+		HPEN hLinePenRed;
+		COLORREF qLineColorRed = RGB(255, 0, 0);
+		hLinePenRed = CreatePen(PS_SOLID, 7, qLineColorRed);
+		hPenOld = (HPEN)SelectObject(hdc, hLinePenRed);
 
 		MoveToEx(hdc, 100, 100, NULL);
 		LineTo(hdc, 500, 250);
 
 		SelectObject(hdc, hPenOld);
-		DeleteObject(hLinePen);
+		DeleteObject(hLinePenRed);
+
+		//Draw a green line line
+		HPEN hLinePenGreen;
+		COLORREF qLineColorGreen = RGB(0, 255, 0);
+		hLinePenGreen = CreatePen(PS_SOLID, 17, qLineColorGreen);
+		hPenOld = (HPEN)SelectObject(hdc, hLinePenGreen);
+
+		MoveToEx(hdc, 150, 10050, NULL);
+		LineTo(hdc, 600, 200);
+
+		SelectObject(hdc, hPenOld);
+		DeleteObject(hLinePenGreen);*/
 
 		//Draw a blue ellipse
 		HPEN hEllipsePen;
