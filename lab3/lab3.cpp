@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <stdlib.h>
 #include <time.h>
+#include "resource.h"
 
 const char g_szClassName[] = "myWindowClass";
 
