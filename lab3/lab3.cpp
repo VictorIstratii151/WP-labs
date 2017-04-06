@@ -5,6 +5,7 @@
 
 const char g_szClassName[] = "myWindowClass";
 HWND Button1;
+bool LineDraw = false;
 
 // Step 4: the Window Procedure
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -12,8 +13,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	PAINTSTRUCT ps;
 	RECT rcClient;
 	HDC hdc;
-	HPEN hPenOld;
-	static BOOL DrawLines = FALSE;
+
+	
 
 	switch (msg)
 	{
@@ -32,8 +33,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 	case WM_PAINT:
 		{
+			HPEN hPenOld;
 			srand(time(NULL));
-			int a, b, c, textColor = 0;
+			int a, b, c = 0;
 
 			GetClientRect(hwnd, &rcClient);
 
@@ -45,8 +47,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 			MoveWindow(Button1, 3 * (width / 4), height / 4, 70, 30, TRUE);
 
-			if (DrawLines == TRUE)
-			{
+			if (LineDraw == true) {
 				for (int i = 0; i < 5; i++)
 				{
 					a = rand() % 255 + 1;
@@ -64,8 +65,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					SelectObject(hdc, hPenOld);
 					DeleteObject(hLinePen);
 				}
-
-				//DrawLines = FALSE;
 			}
 
 			HPEN hEllipsePen;
@@ -86,9 +85,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		{
 			switch (LOWORD(wParam))
 			{
+				case ID_DRAW_ERASE:
+				{
+					LineDraw = false;
+					GetClientRect(hwnd, &rcClient);
+					RedrawWindow(hwnd, &rcClient, NULL, RDW_ERASE);
+				}
 				case ID_DRAW_LINE:
 				{
-					DrawLines = TRUE;
+					LineDraw = true;
 					GetClientRect(hwnd, &rcClient);
 					InvalidateRect(hwnd, NULL, TRUE);
 				}
