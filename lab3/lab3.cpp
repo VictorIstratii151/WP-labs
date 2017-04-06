@@ -4,6 +4,7 @@
 #include "resource.h"
 
 const char g_szClassName[] = "myWindowClass";
+HWND Button1;
 
 // Step 4: the Window Procedure
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -14,37 +15,50 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 	switch (msg)
 	{
-	case WM_PAINT:
-	{
-		srand(time(NULL));
-		HPEN hPenOld;
-		int a, b, c, textColor = 0;
-
-		GetClientRect(hwnd, &rcClient);
-
-		hdc = BeginPaint(hwnd, &ps);
-
-
-		int width = rcClient.right - rcClient.left;
-		int height = rcClient.bottom - rcClient.top;
-
-		for (int i = 0; i < 5; i++)
+	case WM_CREATE:
 		{
-			a = rand() % 255 + 1;
-			b = rand() % 255 + 1;
-			c = rand() % 255 + 1;
+			hdc = BeginPaint(hwnd, &ps);
 
-			HPEN hLinePen;
-			COLORREF qRandomColor = RGB(a, b, c);
-			hLinePen = CreatePen(PS_SOLID, rand() % 20 + 1, qRandomColor);
-			hPenOld = (HPEN)SelectObject(hdc, hLinePen);
+			GetClientRect(hwnd, &rcClient);
 
-			MoveToEx(hdc, rand() % width, rand() % height, NULL);
-			LineTo(hdc, rand() % width, rand() % height);
+			int width = rcClient.right - rcClient.left;
+			int height = rcClient.bottom - rcClient.top;
+			Button1 = CreateWindowEx(NULL, "BUTTON", "Hi", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 3 * (width / 4), height / 4, 70, 30, hwnd, (HMENU)IDC_BUTTON1, GetModuleHandle(NULL), NULL);
+			
+			EndPaint(hwnd, &ps);
+	}
 
-			SelectObject(hdc, hPenOld);
-			DeleteObject(hLinePen);
-		}
+	case WM_PAINT:
+		{
+			srand(time(NULL));
+			HPEN hPenOld;
+			int a, b, c, textColor = 0;
+
+			GetClientRect(hwnd, &rcClient);
+
+			hdc = BeginPaint(hwnd, &ps);
+
+
+			int width = rcClient.right - rcClient.left;
+			int height = rcClient.bottom - rcClient.top;
+
+			for (int i = 0; i < 5; i++)
+			{
+				a = rand() % 255 + 1;
+				b = rand() % 255 + 1;
+				c = rand() % 255 + 1;
+
+				HPEN hLinePen;
+				COLORREF qRandomColor = RGB(a, b, c);
+				hLinePen = CreatePen(PS_SOLID, rand() % 20 + 1, qRandomColor);
+				hPenOld = (HPEN)SelectObject(hdc, hLinePen);
+
+				MoveToEx(hdc, rand() % width, rand() % height, NULL);
+				LineTo(hdc, rand() % width, rand() % height);
+
+				SelectObject(hdc, hPenOld);
+				DeleteObject(hLinePen);
+			}
 
 		/*//Draw a red line
 		HPEN hLinePenRed;
@@ -71,18 +85,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		DeleteObject(hLinePenGreen);*/
 
 		//Draw a blue ellipse
-		HPEN hEllipsePen;
-		COLORREF qEllipseColor = RGB(0, 0, 255);
-		hEllipsePen = CreatePen(PS_DOT, 1, qEllipseColor);
-		hPenOld = (HPEN)SelectObject(hdc, hEllipsePen);
+			HPEN hEllipsePen;
+			COLORREF qEllipseColor = RGB(0, 0, 255);
+			hEllipsePen = CreatePen(PS_DOT, 1, qEllipseColor);
+			hPenOld = (HPEN)SelectObject(hdc, hEllipsePen);
 
-		Arc(hdc, 100, 100, 500, 250, 0, 0, 0, 0);
+			Arc(hdc, 100, 100, 500, 250, 0, 0, 0, 0);
 
-		SelectObject(hdc, hPenOld);
-		DeleteObject(hEllipsePen);
+			SelectObject(hdc, hPenOld);
+			DeleteObject(hEllipsePen);
 
-		EndPaint(hwnd, &ps);
-	}
+			EndPaint(hwnd, &ps);
+		}
 	break;
 
 	case WM_CLOSE:
