@@ -11,6 +11,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 	switch (msg)
 	{
+	case WM_PAINT:
+	{
+		hdc = BeginPaint(hwnd, &ps);
+
+		EndPaint(hwnd, &ps);
+	}
+	break;
 
 	case WM_CLOSE:
 		{
