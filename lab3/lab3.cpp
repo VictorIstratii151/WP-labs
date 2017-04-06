@@ -23,7 +23,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 			int width = rcClient.right - rcClient.left;
 			int height = rcClient.bottom - rcClient.top;
-			Button1 = CreateWindowEx(NULL, "BUTTON", "Hi", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 3 * (width / 4), height / 4, 70, 30, hwnd, (HMENU)IDC_BUTTON1, GetModuleHandle(NULL), NULL);
+			Button1 = CreateWindowEx(NULL, "BUTTON", "Erase", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 3 * (width / 4), height / 4, 70, 30, hwnd, (HMENU)IDC_BUTTON1, GetModuleHandle(NULL), NULL);
 			
 			EndPaint(hwnd, &ps);
 	}
@@ -41,6 +41,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 			int width = rcClient.right - rcClient.left;
 			int height = rcClient.bottom - rcClient.top;
+
+			MoveWindow(Button1, 3 * (width / 4), height / 4, 70, 30, TRUE);
 
 			for (int i = 0; i < 5; i++)
 			{
