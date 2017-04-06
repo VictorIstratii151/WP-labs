@@ -3,6 +3,62 @@
 #include <time.h>
 #include "resource.h"
 
+void drawFigures(HWND hwnd)
+{
+	srand(time(NULL));
+
+	PAINTSTRUCT ps;
+	RECT rcClient;
+	HPEN hPenOld;
+	HDC hdc;
+
+	static int a, b, c;
+
+	hdc = BeginPaint(hwnd, &ps);
+
+	GetClientRect(hwnd, &rcClient);
+	
+	POINT arrow[7];
+	arrow[0].x = 20;
+	arrow[0].y = 50;
+	arrow[1].x = 180;
+	arrow[1].y = 50;
+	arrow[2].x = 180;
+	arrow[2].y = 20;
+	arrow[3].x = 230;
+	arrow[3].y = 70;
+	arrow[4].x = 180;
+	arrow[4].y = 120;
+	arrow[5].x = 180;
+	arrow[5].y = 90;
+	arrow[6].x = 20;
+	arrow[6].y = 90;
+
+	Polygon(hdc, arrow, 7);
+
+	HPEN hEllipsePen;
+	COLORREF qEllipseColor = RGB(0, 0, 255);
+	hEllipsePen = CreatePen(PS_DOT, 1, qEllipseColor);
+	hPenOld = (HPEN)SelectObject(hdc, hEllipsePen);
+
+	Arc(hdc, 100, 100, 500, 250, 0, 0, 0, 0);
+
+	SelectObject(hdc, hPenOld);
+	DeleteObject(hEllipsePen);
+
+	HPEN hRoundRectPen;
+	COLORREF qRoundRectColor = RGB(123, 54, 100);
+	hRoundRectPen = CreatePen(PS_SOLID, 10, qRoundRectColor);
+	hPenOld = (HPEN)SelectObject(hdc, hRoundRectPen);
+
+	RoundRect(hdc, 150, 150, 200, 200, 42, 38);
+
+	SelectObject(hdc, hPenOld);
+	DeleteObject(hRoundRectPen);
+
+	EndPaint(hwnd, &ps);
+}
+
 void drawLines(HWND hwnd)
 {
 	srand(time(NULL));
@@ -122,7 +178,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					DeleteObject(hLinePen);
 				}
 				LineDraw = false;
-			}*/
+			}
 
 			HPEN hEllipsePen;
 			COLORREF qEllipseColor = RGB(0, 0, 255);
@@ -134,7 +190,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			SelectObject(hdc, hPenOld);
 			DeleteObject(hEllipsePen);
 
-			EndPaint(hwnd, &ps);
+			EndPaint(hwnd, &ps);*/
 		}
 	break;
 	
@@ -146,7 +202,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				{
 					GetClientRect(hwnd, &rcClient);
 					InvalidateRect(hwnd, NULL, TRUE);
-					//RedrawWindow(hwnd, &rcClient, NULL, RDW_ERASE);
 				}
 				break;
 
@@ -154,6 +209,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				{
 					InvalidateRect(hwnd, NULL, TRUE);
 					drawLines(hwnd);
+				}
+				break;
+
+				case ID_DRAW_PLANE:
+				{
+					InvalidateRect(hwnd, NULL, TRUE);
+					drawFigures(hwnd);
 				}
 				break;
 			}
