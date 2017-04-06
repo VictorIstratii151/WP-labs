@@ -1,4 +1,6 @@
 #include <windows.h>
+#include <stdlib.h>
+#include <time.h>
 
 const char g_szClassName[] = "myWindowClass";
 
@@ -13,8 +15,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_PAINT:
 	{
+		srand(time(NULL));
 		HPEN hPenOld;
-		static int a, b, c, textColor = 0;
+		int a, b, c, textColor = 0;
 
 		GetClientRect(hwnd, &rcClient);
 
