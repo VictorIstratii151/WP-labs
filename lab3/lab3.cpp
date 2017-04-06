@@ -12,6 +12,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	PAINTSTRUCT ps;
 	RECT rcClient;
 	HDC hdc;
+	HPEN hPenOld;
+	BOOL shouldRedraw = false;
 
 	switch (msg)
 	{
@@ -31,7 +33,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_PAINT:
 		{
 			srand(time(NULL));
-			HPEN hPenOld;
 			int a, b, c, textColor = 0;
 
 			GetClientRect(hwnd, &rcClient);
@@ -44,22 +45,27 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 			MoveWindow(Button1, 3 * (width / 4), height / 4, 70, 30, TRUE);
 
-			for (int i = 0; i < 5; i++)
+			if (shouldRedraw == true)
 			{
-				a = rand() % 255 + 1;
-				b = rand() % 255 + 1;
-				c = rand() % 255 + 1;
+				for (int i = 0; i < 5; i++)
+				{
+					a = rand() % 255 + 1;
+					b = rand() % 255 + 1;
+					c = rand() % 255 + 1;
 
-				HPEN hLinePen;
-				COLORREF qRandomColor = RGB(a, b, c);
-				hLinePen = CreatePen(PS_SOLID, rand() % 20 + 1, qRandomColor);
-				hPenOld = (HPEN)SelectObject(hdc, hLinePen);
+					HPEN hLinePen;
+					COLORREF qRandomColor = RGB(a, b, c);
+					hLinePen = CreatePen(PS_SOLID, rand() % 20 + 1, qRandomColor);
+					hPenOld = (HPEN)SelectObject(hdc, hLinePen);
 
-				MoveToEx(hdc, rand() % width, rand() % height, NULL);
-				LineTo(hdc, rand() % width, rand() % height);
+					MoveToEx(hdc, rand() % width, rand() % height, NULL);
+					LineTo(hdc, rand() % width, rand() % height);
 
-				SelectObject(hdc, hPenOld);
-				DeleteObject(hLinePen);
+					SelectObject(hdc, hPenOld);
+					DeleteObject(hLinePen);
+				}
+
+				shouldRedraw = false;
 			}
 
 		/*//Draw a red line
