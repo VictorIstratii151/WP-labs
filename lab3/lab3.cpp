@@ -15,6 +15,20 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 		hdc = BeginPaint(hwnd, &ps);
 
+		HPEN hPenOld;
+
+		//Draw a red line
+		HPEN hLinePen;
+		COLORREF qLineColor = RGB(255, 0, 0);
+		hLinePen = CreatePen(PS_SOLID, 7, qLineColor);
+		hPenOld = (HPEN)SelectObject(hdc, hLinePen);
+
+		MoveToEx(hdc, 100, 100, NULL);
+		LineTo(hdc, 500, 250);
+
+		SelectObject(hdc, hPenOld);
+		DeleteObject(hLinePen);
+
 		EndPaint(hwnd, &ps);
 	}
 	break;
