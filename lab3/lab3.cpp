@@ -13,7 +13,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	RECT rcClient;
 	HDC hdc;
 	HPEN hPenOld;
-	BOOL shouldRedraw = false;
+	static BOOL DrawLines = FALSE;
 
 	switch (msg)
 	{
@@ -45,7 +45,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 			MoveWindow(Button1, 3 * (width / 4), height / 4, 70, 30, TRUE);
 
-			if (shouldRedraw == true)
+			if (DrawLines == TRUE)
 			{
 				for (int i = 0; i < 5; i++)
 				{
@@ -65,34 +65,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					DeleteObject(hLinePen);
 				}
 
-				shouldRedraw = false;
+				//DrawLines = FALSE;
 			}
 
-		/*//Draw a red line
-		HPEN hLinePenRed;
-		COLORREF qLineColorRed = RGB(255, 0, 0);
-		hLinePenRed = CreatePen(PS_SOLID, 7, qLineColorRed);
-		hPenOld = (HPEN)SelectObject(hdc, hLinePenRed);
-
-		MoveToEx(hdc, 100, 100, NULL);
-		LineTo(hdc, 500, 250);
-
-		SelectObject(hdc, hPenOld);
-		DeleteObject(hLinePenRed);
-
-		//Draw a green line line
-		HPEN hLinePenGreen;
-		COLORREF qLineColorGreen = RGB(0, 255, 0);
-		hLinePenGreen = CreatePen(PS_SOLID, 17, qLineColorGreen);
-		hPenOld = (HPEN)SelectObject(hdc, hLinePenGreen);
-
-		MoveToEx(hdc, 150, 10050, NULL);
-		LineTo(hdc, 600, 200);
-
-		SelectObject(hdc, hPenOld);
-		DeleteObject(hLinePenGreen);*/
-
-		//Draw a blue ellipse
 			HPEN hEllipsePen;
 			COLORREF qEllipseColor = RGB(0, 0, 255);
 			hEllipsePen = CreatePen(PS_DOT, 1, qEllipseColor);
@@ -104,6 +79,21 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			DeleteObject(hEllipsePen);
 
 			EndPaint(hwnd, &ps);
+		}
+	break;
+
+	case WM_COMMAND:
+		{
+			switch (LOWORD(wParam))
+			{
+				case ID_DRAW_LINE:
+				{
+					DrawLines = TRUE;
+					GetClientRect(hwnd, &rcClient);
+					InvalidateRect(hwnd, NULL, TRUE);
+				}
+				break;
+			}
 		}
 	break;
 
@@ -144,7 +134,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-	wc.lpszMenuName = NULL;
+	wc.lpszMenuName = MAKEINTRESOURCE(IDR_MYMENU);;
 	wc.lpszClassName = g_szClassName;
 	wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 
