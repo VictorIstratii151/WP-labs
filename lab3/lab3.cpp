@@ -32,7 +32,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		//Draw a blue ellipse
 		HPEN hEllipsePen;
 		COLORREF qEllipseColor = RGB(0, 0, 255);
-		hEllipsePen = CreatePen(PS_SOLID, 3, qEllipseColor);
+		hEllipsePen = CreatePen(PS_DOT, 1, qEllipseColor);
 		hPenOld = (HPEN)SelectObject(hdc, hEllipsePen);
 
 		Arc(hdc, 100, 100, 500, 250, 0, 0, 0, 0);
