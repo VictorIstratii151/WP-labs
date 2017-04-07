@@ -4,7 +4,6 @@
 
 #define ID_DRAW_LINE                    40001
 #define ID_DRAW_PLANE					40002
-#define ID_DRAW_BEZIER					40003
-#define ID_DRAW_ERASE					40004
+#define ID_DRAW_ERASE					40003
 
 #define IDC_BUTTON1						1

@@ -142,8 +142,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="lab3.cpp" />
+    <ClCompile Include="listStuff.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="listStuff.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,11 @@
 #include <windows.h>
 #include <stdlib.h>
 #include <time.h>
+#include <list>
 #include "resource.h"
+#include "listStuff.h"
+
+using namespace std;
 
 void drawFigures(HWND hwnd)
 {
@@ -34,7 +38,16 @@ void drawFigures(HWND hwnd)
 	arrow[6].x = 20;
 	arrow[6].y = 90;
 
+	POINT triangle[3];
+	triangle[0].x = 200;
+	triangle[0].y = 200;
+	triangle[1].x = 270;
+	triangle[1].y = 240;
+	triangle[2].x = 230;
+	triangle[2].y = 110;
+
 	Polygon(hdc, arrow, 7);
+	Polygon(hdc, triangle, 3);
 
 	HPEN hEllipsePen;
 	COLORREF qEllipseColor = RGB(0, 0, 255);
@@ -109,6 +122,7 @@ const char g_szClassName[] = "myWindowClass";
 HWND Button1;
 bool LineDraw = false;
 POINT coordinates[5];
+list<listItem> LinesList;
 
 // Step 4: the Window Procedure
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -207,8 +221,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 				case ID_DRAW_LINE:
 				{
+					if (LinesList.size() != 0);
+					{
+						LinesList.clear();
+					}
+					for (int i = 0; i < 5; i++)
+					{
+						ListItem item = initListItem();
+						
+
+						//LinesList.push_back(item);
+					}
 					InvalidateRect(hwnd, NULL, TRUE);
-					drawLines(hwnd);
+					//drawLines(hwnd);
 				}
 				break;
 
