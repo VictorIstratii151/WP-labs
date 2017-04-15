@@ -1,6 +1,4 @@
 #pragma once
-#include <windows.h>
-
 struct itemProperties{
 	int width;
 	int colorA;
@@ -12,8 +10,6 @@ typedef struct itemProperties ItemProperties;
 
 struct listItem {
 	ItemProperties properties;
-	HPEN pen;
-	COLORREF color;
 	int xStart;
 	int yStart;
 	int xEnd;
@@ -22,4 +18,4 @@ struct listItem {
 
 typedef struct listItem ListItem;
 
-ListItem initListItem();
+ListItem initListItem(int width, int height);

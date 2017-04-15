@@ -1,11 +1,50 @@
 #include <windows.h>
-#include <stdlib.h>
-#include <time.h>
+#include <cstdlib>
+#include <ctime>
 #include <list>
+#include <vector>
+//#include <gdiplus.h>
 #include "resource.h"
 #include "listStuff.h"
+#include <string>
 
 using namespace std;
+//using namespace Gdiplus;
+//#pragma comment (lib, "Gdiplus.lib")
+
+void MakeLines(HDC hdc, vector<ListItem> LinesVector)
+{
+	HPEN hPenOld;
+
+	for (int i = 0; i < LinesVector.size(); i++)
+	{
+		ListItem currentElement = LinesVector[i];
+
+		COLORREF qLineColor = RGB(currentElement.properties.colorA, currentElement.properties.colorB, currentElement.properties.colorC);
+		HPEN hLinePen = CreatePen(PS_SOLID, currentElement.properties.width, qLineColor);
+		hPenOld = (HPEN)SelectObject(hdc, hLinePen);
+
+		MoveToEx(hdc, currentElement.xStart, currentElement.yStart, NULL);
+		LineTo(hdc, currentElement.xEnd, currentElement.yEnd);
+
+		SelectObject(hdc, hPenOld);
+		DeleteObject(hLinePen);
+	}
+
+	// Draw a red line
+	/*HPEN hLinePen;
+	COLORREF qLineColor;
+	qLineColor = RGB(255, 0, 0);
+	hLinePen = CreatePen(PS_SOLID, 7, qLineColor);
+	hPenOld = (HPEN)SelectObject(hdc, hLinePen);
+
+	MoveToEx(hdc, 100, 100, NULL);
+	LineTo(hdc, 500, 250);
+
+	SelectObject(hdc, hPenOld);
+	DeleteObject(hLinePen);*/
+	//USE GDI +
+}
 
 void drawFigures(HWND hwnd)
 {
@@ -122,7 +161,7 @@ const char g_szClassName[] = "myWindowClass";
 HWND Button1;
 bool LineDraw = false;
 POINT coordinates[5];
-list<listItem> LinesList;
+vector<ListItem> LinesVector;
 
 // Step 4: the Window Procedure
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -137,6 +176,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_CREATE:
 		{
+			vector<ListItem> LinesVector;
 			hdc = BeginPaint(hwnd, &ps);
 
 			GetClientRect(hwnd, &rcClient);
@@ -144,7 +184,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			int width = rcClient.right - rcClient.left;
 			int height = rcClient.bottom - rcClient.top;
 			Button1 = CreateWindowEx(NULL, "BUTTON", "Erase", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 3 * (width / 4), height / 4, 70, 30, hwnd, (HMENU)IDC_BUTTON1, GetModuleHandle(NULL), NULL);
-			
+
 			EndPaint(hwnd, &ps);
 	}
 
@@ -152,59 +192,26 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		{
 			HPEN hPenOld;
 			srand(time(NULL));
-			int a, b, c = 0;
 
 			GetClientRect(hwnd, &rcClient);
-
-			hdc = BeginPaint(hwnd, &ps);
-
-
 			int width = rcClient.right - rcClient.left;
 			int height = rcClient.bottom - rcClient.top;
 
-			MoveWindow(Button1, 3 * (width / 4), height / 4, 70, 30, TRUE);
+			hdc = BeginPaint(hwnd, &ps);
 
-		
+			string sas = to_string(LinesVector.size());
+			const char * sos = sas.c_str();
 
-			/*if (LineDraw == true) {
-				for (int i = 0; i < 5; i++)
-				{
-					a = rand() % 255 + 1;
-					b = rand() % 255 + 1;
-					c = rand() % 255 + 1;
+			//MessageBoxA(hwnd, sos, "sas", MB_OK);
 
-					HPEN hLinePen;
-					COLORREF qRandomColor = RGB(a, b, c);
-					hLinePen = CreatePen(PS_SOLID, rand() % 20 + 1, qRandomColor);
-					hPenOld = (HPEN)SelectObject(hdc, hLinePen);
-
-					int xStart = rand() % width;
-					int yStart = rand() % height;
-					int xEnd = rand() % width;
-					int yEnd = rand() % height;
-
-					
-
-					MoveToEx(hdc, xStart, yStart, NULL);
-					LineTo(hdc, xEnd, yEnd);
-
-					SelectObject(hdc, hPenOld);
-					DeleteObject(hLinePen);
-				}
-				LineDraw = false;
+			if (LinesVector.size() != 0)
+			{
+				MakeLines(hdc, LinesVector);
 			}
 
-			HPEN hEllipsePen;
-			COLORREF qEllipseColor = RGB(0, 0, 255);
-			hEllipsePen = CreatePen(PS_DOT, 1, qEllipseColor);
-			hPenOld = (HPEN)SelectObject(hdc, hEllipsePen);
+			MoveWindow(Button1, 3 * (width / 4), height / 4, 70, 30, TRUE);
 
-			Arc(hdc, 100, 100, 500, 250, 0, 0, 0, 0);
-
-			SelectObject(hdc, hPenOld);
-			DeleteObject(hEllipsePen);
-
-			EndPaint(hwnd, &ps);*/
+			EndPaint(hwnd, &ps);
 		}
 	break;
 	
@@ -221,16 +228,26 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 				case ID_DRAW_LINE:
 				{
-					if (LinesList.size() != 0);
+					GetClientRect(hwnd, &rcClient);
+
+					int width = rcClient.right - rcClient.left;
+					int height = rcClient.bottom - rcClient.top;
+
+					if (LinesVector.size() != 0)
 					{
-						LinesList.clear();
+						LinesVector.clear();
 					}
 					for (int i = 0; i < 5; i++)
 					{
-						ListItem item = initListItem();
+						ListItem item = initListItem(width, height);
 						
 
-						//LinesList.push_back(item);
+						LinesVector.push_back(item);
+
+						string sas = to_string(LinesVector.size());
+						const char * sos = sas.c_str();
+
+						MessageBoxA(hwnd, sos, "in wm_lines", MB_OK);
 					}
 					InvalidateRect(hwnd, NULL, TRUE);
 					//drawLines(hwnd);
