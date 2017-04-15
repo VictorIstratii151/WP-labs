@@ -12,13 +12,16 @@ using namespace std;
 //using namespace Gdiplus;
 //#pragma comment (lib, "Gdiplus.lib")
 
-void MakeLines(HDC hdc, vector<ListItem> LinesVector)
+void MakeLines(HDC hdc, HWND hwnd, vector<ListItem> LinesVector)
 {
 	HPEN hPenOld;
 
-	for (int i = 0; i < LinesVector.size(); i++)
+	for (int i = 0; i < 5; i++)
 	{
 		ListItem currentElement = LinesVector[i];
+
+		string xinfo2 = to_string(currentElement.xStart);
+		const char * xinfo22 = xinfo2.c_str();
 
 		COLORREF qLineColor = RGB(currentElement.properties.colorA, currentElement.properties.colorB, currentElement.properties.colorC);
 		HPEN hLinePen = CreatePen(PS_SOLID, currentElement.properties.width, qLineColor);
@@ -27,23 +30,12 @@ void MakeLines(HDC hdc, vector<ListItem> LinesVector)
 		MoveToEx(hdc, currentElement.xStart, currentElement.yStart, NULL);
 		LineTo(hdc, currentElement.xEnd, currentElement.yEnd);
 
+		//MessageBoxA(hwnd, xinfo22, "in makelines", MB_OK);
+
+
 		SelectObject(hdc, hPenOld);
 		DeleteObject(hLinePen);
 	}
-
-	// Draw a red line
-	/*HPEN hLinePen;
-	COLORREF qLineColor;
-	qLineColor = RGB(255, 0, 0);
-	hLinePen = CreatePen(PS_SOLID, 7, qLineColor);
-	hPenOld = (HPEN)SelectObject(hdc, hLinePen);
-
-	MoveToEx(hdc, 100, 100, NULL);
-	LineTo(hdc, 500, 250);
-
-	SelectObject(hdc, hPenOld);
-	DeleteObject(hLinePen);*/
-	//USE GDI +
 }
 
 void drawFigures(HWND hwnd)
@@ -111,52 +103,6 @@ void drawFigures(HWND hwnd)
 	EndPaint(hwnd, &ps);
 }
 
-void drawLines(HWND hwnd)
-{
-	srand(time(NULL));
-
-	PAINTSTRUCT ps;
-	RECT rcClient;
-	HPEN hPenOld;
-	HDC hdc; 
-
-	static int a, b, c;
-
-	hdc = BeginPaint(hwnd, &ps);
-
-	GetClientRect(hwnd, &rcClient);
-
-	int width = rcClient.right - rcClient.left;
-	int height = rcClient.bottom - rcClient.top;
-
-	for (int i = 0; i < 5; i++)
-	{
-		a = rand() % 255 + 1;
-		b = rand() % 255 + 1;
-		c = rand() % 255 + 1;
-
-		HPEN hLinePen;
-		COLORREF qRandomColor = RGB(a, b, c);
-		hLinePen = CreatePen(PS_SOLID, rand() % 20 + 1, qRandomColor);
-		hPenOld = (HPEN)SelectObject(hdc, hLinePen);
-
-		int xStart = rand() % width;
-		int yStart = rand() % height;
-		int xEnd = rand() % width;
-		int yEnd = rand() % height;
-
-
-
-		MoveToEx(hdc, xStart, yStart, NULL);
-		LineTo(hdc, xEnd, yEnd);
-
-		SelectObject(hdc, hPenOld);
-		DeleteObject(hLinePen);
-	}
-
-	EndPaint(hwnd, &ps);
-}
-
 const char g_szClassName[] = "myWindowClass";
 HWND Button1;
 bool LineDraw = false;
@@ -191,7 +137,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_PAINT:
 		{
 			HPEN hPenOld;
-			srand(time(NULL));
 
 			GetClientRect(hwnd, &rcClient);
 			int width = rcClient.right - rcClient.left;
@@ -202,11 +147,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			string sas = to_string(LinesVector.size());
 			const char * sos = sas.c_str();
 
-			//MessageBoxA(hwnd, sos, "sas", MB_OK);
-
-			if (LinesVector.size() != 0)
+			if (LinesVector.size() == 5)
 			{
-				MakeLines(hdc, LinesVector);
+				MakeLines(hdc, hwnd, LinesVector);
 			}
 
 			MoveWindow(Button1, 3 * (width / 4), height / 4, 70, 30, TRUE);
@@ -221,7 +164,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			{
 				case ID_DRAW_ERASE:
 				{
-					GetClientRect(hwnd, &rcClient);
+					LinesVector.clear();
 					InvalidateRect(hwnd, NULL, TRUE);
 				}
 				break;
@@ -233,10 +176,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					int width = rcClient.right - rcClient.left;
 					int height = rcClient.bottom - rcClient.top;
 
-					if (LinesVector.size() != 0)
-					{
-						LinesVector.clear();
-					}
+					LinesVector.clear();
+
 					for (int i = 0; i < 5; i++)
 					{
 						ListItem item = initListItem(width, height);
@@ -244,13 +185,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 						LinesVector.push_back(item);
 
-						string sas = to_string(LinesVector.size());
-						const char * sos = sas.c_str();
-
-						MessageBoxA(hwnd, sos, "in wm_lines", MB_OK);
+						string xinfo1 = to_string(LinesVector[i].xStart);
+						const char * xinfo11 = xinfo1.c_str();
+						
 					}
 					InvalidateRect(hwnd, NULL, TRUE);
-					//drawLines(hwnd);
 				}
 				break;
 

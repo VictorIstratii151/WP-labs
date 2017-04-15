@@ -5,7 +5,7 @@
 
 ListItem initListItem(int width, int height)
 {
-	srand(time(NULL));
+	//srand(time(NULL));
 	
 	int xStart = rand() % width + 1;
 	int yStart = rand() % height + 1;
@@ -14,7 +14,7 @@ ListItem initListItem(int width, int height)
 
 	ListItem item;
 
-	item.properties.width = rand() % 20 + 1;
+	item.properties.width = rand() % 50 + 1;
 	item.properties.colorA = rand() % 255 + 1;
 	item.properties.colorB = rand() % 255 + 1;
 	item.properties.colorC = rand() % 255 + 1;
