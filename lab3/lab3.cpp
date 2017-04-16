@@ -1,3 +1,4 @@
+
 #include <windows.h>
 #include <cstdlib>
 #include <ctime>
@@ -11,6 +12,24 @@
 using namespace std;
 //using namespace Gdiplus;
 //#pragma comment (lib, "Gdiplus.lib")
+
+void initBezierVector(vector<POINT> &vect, int size, HWND hwnd)
+{
+	RECT rcClient;
+	GetClientRect(hwnd, &rcClient);
+
+	int width = rcClient.right - rcClient.left;
+	int height = rcClient.bottom - rcClient.top;
+
+	for (int i = 0; i < size; i++)
+	{
+		POINT currentElement;
+		currentElement.x = rand() % width + 1;
+		currentElement.y = rand() % height + 1;
+
+		vect.push_back(currentElement);
+	}
+}
 
 void MakeLines(HDC hdc, HWND hwnd, vector<ListItem> LinesVector)
 {
@@ -108,6 +127,8 @@ HWND Button1;
 bool LineDraw = false;
 POINT coordinates[5];
 vector<ListItem> LinesVector;
+vector<vector<POINT>> arrOfBezierVectors;
+POINT Pt[4] = { { 320, 120 },{ 80, 246 },{ 364, 122 } };
 
 // Step 4: the Window Procedure
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -147,11 +168,61 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			string sas = to_string(LinesVector.size());
 			const char * sos = sas.c_str();
 
+
 			if (LinesVector.size() == 5)
 			{
 				MakeLines(hdc, hwnd, LinesVector);
 			}
+			//string size = to_string(arrOfBezierVectors.size());
+			//const char * csize = size.c_str();
+			//MessageBoxA(hwnd, csize, "sas", MB_OK);
 
+			if (arrOfBezierVectors.size() == 2)
+			{
+				/*vector<POINT> temp = arrOfBezierVectors[0];
+				POINT * arr = &temp[0];
+
+				string size = to_string(temp.size());
+				const char * csize = size.c_str();
+				MessageBoxA(hwnd, csize, "sas", MB_OK);*/
+
+				for (vector <vector<POINT>> ::iterator it = arrOfBezierVectors.begin(); it != arrOfBezierVectors.end(); ++it)
+				{
+					vector<POINT> temp = *it;
+					const int arrSize = temp.size();
+					POINT * arr = new POINT[arrSize];
+
+					for (int i = 0; i < temp.size(); i++)
+					{
+						arr[i] = temp[i];
+					}
+
+					/*for (int i = 0; i < temp.size(); i++)
+					{
+						string size = to_string(arr[i].x);
+						const char * csize = size.c_str();
+						MessageBoxA(hwnd, csize, "sas", MB_OK);
+					}*/
+
+					string size = to_string(sizeof(arr) / sizeof(arr[0]));
+					const char * csize = size.c_str();
+					//MessageBoxA(hwnd, csize, "sas", MB_OK);
+
+					PolyBezierTo(hdc, arr, temp.size());
+				}
+
+
+				//for (int i = 0; i < arrOfBezierVectors.size(); i++)
+				//{
+				//string size = to_string(arrOfBezierVectors.size());
+				//const char * csize = size.c_str();
+				//MessageBoxA(hwnd, csize, "sas", MB_OK);
+				//	vector<POINT> temp = arrOfBezierVectors[i];
+				//	POINT * arr = &temp[0];
+				//	PolyBezierTo(hdc, arr, arrOfBezierVectors.size());
+				//}
+			}
+		
 			MoveWindow(Button1, 3 * (width / 4), height / 4, 70, 30, TRUE);
 
 			EndPaint(hwnd, &ps);
@@ -165,6 +236,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				case ID_DRAW_ERASE:
 				{
 					LinesVector.clear();
+					arrOfBezierVectors.clear();
 					InvalidateRect(hwnd, NULL, TRUE);
 				}
 				break;
@@ -197,6 +269,35 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				{
 					InvalidateRect(hwnd, NULL, TRUE);
 					drawFigures(hwnd);
+				}
+				break;
+
+				case ID_DRAW_BEZIER:
+				{
+					arrOfBezierVectors.clear();
+
+					int vectSize;
+					for (int i = 0; i < 2; i++)
+					{
+						vector<POINT> bezierVector;
+						vectSize = rand() % 5 + 5;
+						initBezierVector(bezierVector, vectSize, hwnd);
+
+						/*string size = to_string(bezierVector.size());
+						const char * csize = size.c_str();
+						MessageBoxA(hwnd, csize, "sas", MB_OK);*/
+
+						InvalidateRect(hwnd, NULL, TRUE);
+
+						arrOfBezierVectors.push_back(bezierVector);
+					}
+					vector<POINT> temp = arrOfBezierVectors[0];
+
+					/*string size = to_string(temp.size());
+					const char * csize = size.c_str();
+					MessageBoxA(hwnd, csize, "sas", MB_OK);*/
+
+					InvalidateRect(hwnd, NULL, TRUE);
 				}
 				break;
 			}
