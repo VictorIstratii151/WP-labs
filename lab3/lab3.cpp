@@ -314,6 +314,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 				case IDC_CRAYON:
 				{
+					colour = RGB(255, 0, 0);
+					hpen = CreatePen(PS_SOLID, 5, colour);
 					if (willDraw == TRUE)
 					{
 						willDraw = FALSE;
@@ -323,9 +325,26 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					{
 						willDraw = TRUE;
 					}
-					string size = to_string(willDraw);
+					/*string size = to_string(willDraw);
 					const char * csize = size.c_str();
-					MessageBoxA(hwnd, csize, "sas", MB_OK);
+					MessageBoxA(hwnd, csize, "sas", MB_OK);*/
+				}
+				break;
+
+				case IDC_ERASER:
+				{
+					colour = RGB(255, 255, 255);
+					hpen = CreatePen(PS_SOLID, 5, colour);
+
+					if (willDraw == TRUE)
+					{
+						willDraw = FALSE;
+						isDrawing = FALSE;
+					}
+					else
+					{
+						willDraw = TRUE;
+					}
 				}
 				break;
 			}
@@ -338,8 +357,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			{
 				hdc = GetDC(hwnd);
 
-				colour = RGB(255, 0, 0);
-				hpen = CreatePen(PS_SOLID, 5, colour);
+				/*colour = RGB(255, 0, 0);
+				hpen = CreatePen(PS_SOLID, 5, colour);*/
 				SelectObject(hdc, hpen);
 
 				ptPrevious.x = LOWORD(lParam);
