@@ -127,8 +127,8 @@ HWND Button1;
 HWND Button2;
 
 bool LineDraw = false;
-BOOL fDraw = FALSE;
 BOOL willDraw = FALSE;
+BOOL isDrawing = FALSE;
 
 POINT coordinates[5];
 POINT ptPrevious;
@@ -145,7 +145,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	PAINTSTRUCT ps;
 	RECT rcClient;
 	HDC hdc;
-	HPEN hpen;
+	HPEN hpen = NULL;
 
 	
 
@@ -314,15 +314,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 				case IDC_CRAYON:
 				{
-					if (fDraw == TRUE)
+					if (willDraw == TRUE)
 					{
-						fDraw = FALSE;
+						willDraw = FALSE;
+						isDrawing = FALSE;
 					}
 					else
 					{
-						fDraw = TRUE;
+						willDraw = TRUE;
 					}
-					string size = to_string(fDraw);
+					string size = to_string(willDraw);
 					const char * csize = size.c_str();
 					MessageBoxA(hwnd, csize, "sas", MB_OK);
 				}
@@ -333,7 +334,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 	case WM_LBUTTONDOWN:
 		{
-			if (fDraw == TRUE)
+			if (willDraw == TRUE)
 			{
 				hdc = GetDC(hwnd);
 
@@ -349,43 +350,59 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				MoveToEx(hdc, ptPrevious.x, ptPrevious.y, NULL);
 				LineTo(hdc, ptPrevious.x, ptPrevious.y);
 
-				willDraw = TRUE;
+				isDrawing = TRUE;
 
-				string size = to_string(fDraw);
+				string size = to_string(willDraw);
 				const char * csize = size.c_str();
-				//MessageBoxA(hwnd, "FDRAW TRUE", "sas", MB_OK);
-			}
-			else
-			{
-				//MessageBoxA(hwnd, "FDRAW FALSE", "sas", MB_OK);
+
+				DeleteObject(hpen);
+				ReleaseDC(hwnd, hdc);
 			}
 		}
 	break;
 
-	case WM_LBUTTONUP:
-		{
-			if (fDraw == TRUE)
-			{
+	//case WM_LBUTTONUP:
+	//	{
+	//		if (isDrawing == TRUE)
+	//		{
+	//			hpen = CreatePen(PS_SOLID, 5, colour);
+	//			SelectObject(hdc, hpen);
 
-				hdc = BeginPaint(hwnd, &ps);
-				MoveToEx(hdc, ptPrevious.x, ptPrevious.y, NULL);
-				LineTo(hdc, LOWORD(lParam), HIWORD(lParam));
-				EndPaint(hwnd, &ps);
-				//fDraw = FALSE;
-			}
-			fDraw = FALSE;
-		}
-	break;
+	//			hdc = BeginPaint(hwnd, &ps);
+	//			MoveToEx(hdc, ptPrevious.x, ptPrevious.y, NULL);
+	//			LineTo(hdc, LOWORD(lParam), HIWORD(lParam));
+	//			EndPaint(hwnd, &ps);
+	//			//fDraw = FALSE;
+	//		}
+	//		willDraw = FALSE;
+	//	}
+	//break;
 
 	case WM_MOUSEMOVE:
 		{
-			if (fDraw == TRUE)
+			hdc = GetDC(hwnd);
+
+			if (isDrawing == TRUE)
+			{
+				hpen = CreatePen(PS_SOLID, 5, colour);
+				SelectObject(hdc, hpen);
+
+				MoveToEx(hdc, ptCurrent.x, ptCurrent.y, NULL);
+				ptCurrent.x = LOWORD(lParam);
+				ptCurrent.y = HIWORD(lParam);
+				LineTo(hdc, ptCurrent.x, ptCurrent.y);
+
+			}
+
+			DeleteObject(hpen);
+			ReleaseDC(hwnd, hdc);
+			/*if (willDraw == TRUE)
 			{
 				hdc = BeginPaint(hwnd, &ps);
 				MoveToEx(hdc, ptPrevious.x, ptPrevious.y, NULL);
 				LineTo(hdc, ptPrevious.x = LOWORD(lParam), ptPrevious.y = HIWORD(lParam));
 				EndPaint(hwnd, &ps);
-			}
+			}*/
 		}
 	break;
 	
