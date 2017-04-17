@@ -124,7 +124,7 @@ void drawFigures(HWND hwnd)
 
 const char g_szClassName[] = "myWindowClass";
 HWND Button1;
-HWND CheckBox;
+HWND Button2;
 bool LineDraw = false;
 POINT coordinates[5];
 vector<ListItem> LinesVector;
@@ -151,8 +151,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 			int width = rcClient.right - rcClient.left;
 			int height = rcClient.bottom - rcClient.top;
-			Button1 = CreateWindowEx(NULL, "BUTTON", "Erase", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 3 * (width / 4), height / 4, 70, 30, hwnd, (HMENU)IDC_BUTTON1, GetModuleHandle(NULL), NULL);
-
+			Button1 = CreateWindowEx(NULL, "BUTTON", "Eraser", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 3 * (width / 4), height / 4, 70, 30, hwnd, (HMENU)IDC_BUTTON1, GetModuleHandle(NULL), NULL);
+			Button2 = CreateWindowEx(NULL, "BUTTON", "Crayon", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 3 * (width / 4), height / 4 + 35, 70, 30, hwnd, (HMENU)IDC_BUTTON1, GetModuleHandle(NULL), NULL);
 			EndPaint(hwnd, &ps);
 	}
 
