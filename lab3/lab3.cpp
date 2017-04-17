@@ -125,11 +125,19 @@ void drawFigures(HWND hwnd)
 const char g_szClassName[] = "myWindowClass";
 HWND Button1;
 HWND Button2;
+
 bool LineDraw = false;
+BOOL fDraw = FALSE;
+BOOL willDraw = FALSE;
+
 POINT coordinates[5];
+POINT ptPrevious;
+POINT ptCurrent;
+
 vector<ListItem> LinesVector;
 vector<vector<POINT>> arrOfBezierVectors;
-POINT Pt[4] = { { 320, 120 },{ 80, 246 },{ 364, 122 } };
+
+COLORREF colour = RGB(0, 0, 0);
 
 // Step 4: the Window Procedure
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -137,6 +145,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	PAINTSTRUCT ps;
 	RECT rcClient;
 	HDC hdc;
+	HPEN hpen;
 
 	
 
@@ -151,8 +160,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 			int width = rcClient.right - rcClient.left;
 			int height = rcClient.bottom - rcClient.top;
-			Button1 = CreateWindowEx(NULL, "BUTTON", "Eraser", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 3 * (width / 4), height / 4, 70, 30, hwnd, (HMENU)IDC_BUTTON1, GetModuleHandle(NULL), NULL);
-			Button2 = CreateWindowEx(NULL, "BUTTON", "Crayon", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 3 * (width / 4), height / 4 + 35, 70, 30, hwnd, (HMENU)IDC_BUTTON1, GetModuleHandle(NULL), NULL);
+			Button1 = CreateWindowEx(NULL, "BUTTON", "Eraser", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 3 * (width / 4), height / 4, 70, 30, hwnd, (HMENU)IDC_ERASER, GetModuleHandle(NULL), NULL);
+			Button2 = CreateWindowEx(NULL, "BUTTON", "Crayon", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 3 * (width / 4), height / 4 + 35, 70, 30, hwnd, (HMENU)IDC_CRAYON, GetModuleHandle(NULL), NULL);
 			EndPaint(hwnd, &ps);
 	}
 
@@ -224,8 +233,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				//	PolyBezierTo(hdc, arr, arrOfBezierVectors.size());
 				//}
 			}
-		
 			MoveWindow(Button1, 3 * (width / 4), height / 4, 70, 30, TRUE);
+			MoveWindow(Button2, 3 * (width / 4), height / 4 + 35, 70, 30, TRUE);
 
 			EndPaint(hwnd, &ps);
 		}
@@ -302,6 +311,80 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					InvalidateRect(hwnd, NULL, TRUE);
 				}
 				break;
+
+				case IDC_CRAYON:
+				{
+					if (fDraw == TRUE)
+					{
+						fDraw = FALSE;
+					}
+					else
+					{
+						fDraw = TRUE;
+					}
+					string size = to_string(fDraw);
+					const char * csize = size.c_str();
+					MessageBoxA(hwnd, csize, "sas", MB_OK);
+				}
+				break;
+			}
+		}
+	break;
+
+	case WM_LBUTTONDOWN:
+		{
+			if (fDraw == TRUE)
+			{
+				hdc = GetDC(hwnd);
+
+				colour = RGB(255, 0, 0);
+				hpen = CreatePen(PS_SOLID, 5, colour);
+				SelectObject(hdc, hpen);
+
+				ptPrevious.x = LOWORD(lParam);
+				ptPrevious.y = HIWORD(lParam);
+				ptCurrent.x = LOWORD(lParam);
+				ptCurrent.y = HIWORD(lParam);
+
+				MoveToEx(hdc, ptPrevious.x, ptPrevious.y, NULL);
+				LineTo(hdc, ptPrevious.x, ptPrevious.y);
+
+				willDraw = TRUE;
+
+				string size = to_string(fDraw);
+				const char * csize = size.c_str();
+				//MessageBoxA(hwnd, "FDRAW TRUE", "sas", MB_OK);
+			}
+			else
+			{
+				//MessageBoxA(hwnd, "FDRAW FALSE", "sas", MB_OK);
+			}
+		}
+	break;
+
+	case WM_LBUTTONUP:
+		{
+			if (fDraw == TRUE)
+			{
+
+				hdc = BeginPaint(hwnd, &ps);
+				MoveToEx(hdc, ptPrevious.x, ptPrevious.y, NULL);
+				LineTo(hdc, LOWORD(lParam), HIWORD(lParam));
+				EndPaint(hwnd, &ps);
+				//fDraw = FALSE;
+			}
+			fDraw = FALSE;
+		}
+	break;
+
+	case WM_MOUSEMOVE:
+		{
+			if (fDraw == TRUE)
+			{
+				hdc = BeginPaint(hwnd, &ps);
+				MoveToEx(hdc, ptPrevious.x, ptPrevious.y, NULL);
+				LineTo(hdc, ptPrevious.x = LOWORD(lParam), ptPrevious.y = HIWORD(lParam));
+				EndPaint(hwnd, &ps);
 			}
 		}
 	break;

@@ -7,5 +7,5 @@
 #define ID_DRAW_ERASE					40003
 #define ID_DRAW_BEZIER					40004
 
-#define IDC_BUTTON1						1
-#define IDC_BUTTON2						2
+#define IDC_ERASER					1001
+#define IDC_CRAYON					1002
