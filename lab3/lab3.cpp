@@ -209,6 +209,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					//MessageBoxA(hwnd, csize, "sas", MB_OK);
 
 					PolyBezierTo(hdc, arr, temp.size());
+					MoveToEx(hdc, rand() % width + 1, rand() % height + 1, NULL);
 				}
 
 
@@ -280,7 +281,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					for (int i = 0; i < 2; i++)
 					{
 						vector<POINT> bezierVector;
-						vectSize = rand() % 5 + 5;
+						vectSize = 3;
 						initBezierVector(bezierVector, vectSize, hwnd);
 
 						/*string size = to_string(bezierVector.size());
