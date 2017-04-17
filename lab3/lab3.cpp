@@ -124,6 +124,7 @@ void drawFigures(HWND hwnd)
 
 const char g_szClassName[] = "myWindowClass";
 HWND Button1;
+HWND CheckBox;
 bool LineDraw = false;
 POINT coordinates[5];
 vector<ListItem> LinesVector;
@@ -304,7 +305,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			}
 		}
 	break;
-
+	
 	case WM_CLOSE:
 		{
 			DestroyWindow(hwnd);

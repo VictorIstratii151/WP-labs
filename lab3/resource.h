@@ -8,3 +8,4 @@
 #define ID_DRAW_BEZIER					40004
 
 #define IDC_BUTTON1						1
+#define IDC_BUTTON2						2
