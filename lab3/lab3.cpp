@@ -144,7 +144,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	PAINTSTRUCT ps;
 	RECT rcClient;
-	HDC hdc;
+	HDC hdc = NULL;
 	HPEN hpen = NULL;
 
 	
@@ -335,6 +335,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				{
 					colour = RGB(255, 255, 255);
 					hpen = CreatePen(PS_SOLID, 5, colour);
+					//SelectObject(hdc, (HBRUSH)GetStockObject(NULL_BRUSH));
 
 					if (willDraw == TRUE)
 					{
