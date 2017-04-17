@@ -361,22 +361,20 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		}
 	break;
 
-	//case WM_LBUTTONUP:
-	//	{
-	//		if (isDrawing == TRUE)
-	//		{
-	//			hpen = CreatePen(PS_SOLID, 5, colour);
-	//			SelectObject(hdc, hpen);
+	case WM_LBUTTONUP:
+		{
+			hdc = GetDC(hwnd);
+			if (isDrawing == TRUE)
+			{
+				ptCurrent.x = LOWORD(lParam);
+				ptCurrent.y = HIWORD(lParam);
 
-	//			hdc = BeginPaint(hwnd, &ps);
-	//			MoveToEx(hdc, ptPrevious.x, ptPrevious.y, NULL);
-	//			LineTo(hdc, LOWORD(lParam), HIWORD(lParam));
-	//			EndPaint(hwnd, &ps);
-	//			//fDraw = FALSE;
-	//		}
-	//		willDraw = FALSE;
-	//	}
-	//break;
+				MoveToEx(hdc, ptPrevious.x, ptPrevious.y, NULL);
+			}
+			ReleaseDC(hwnd, hdc);
+			isDrawing = FALSE;
+		}
+	break;
 
 	case WM_MOUSEMOVE:
 		{
