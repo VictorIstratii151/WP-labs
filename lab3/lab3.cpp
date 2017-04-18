@@ -125,6 +125,7 @@ void drawFigures(HWND hwnd)
 const char g_szClassName[] = "myWindowClass";
 
 HINSTANCE hInstance;
+HBITMAP sky = NULL;
 
 HWND Button1;
 HWND Button2;
@@ -150,7 +151,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	HDC hdc = NULL;
 	HDC bitmapDC;
 	HPEN hpen = NULL;
-	HBITMAP sky;
 
 	
 
@@ -163,6 +163,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 			GetClientRect(hwnd, &rcClient);
 
+			sky = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_SKY));
+			if (sky == NULL)
+			{
+				MessageBox(hwnd, "Could not load IDB_SKY!", "Error", MB_OK | MB_ICONEXCLAMATION);
+			}
+
 			int width = rcClient.right - rcClient.left;
 			int height = rcClient.bottom - rcClient.top;
 			Button1 = CreateWindowEx(NULL, "BUTTON", "Eraser", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 3 * (width / 4), height / 4, 70, 30, hwnd, (HMENU)IDC_ERASER, GetModuleHandle(NULL), NULL);
@@ -173,6 +179,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_PAINT:
 		{
 			HPEN hPenOld;
+			BITMAP bm;
 
 			GetClientRect(hwnd, &rcClient);
 			int width = rcClient.right - rcClient.left;
@@ -180,11 +187,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 			hdc = BeginPaint(hwnd, &ps);
 
-			sky = LoadBitmap(hInstance, "You-will-fly-up-into-the-sky.bmp");
-			bitmapDC = CreateCompatibleDC(hdc);
-			SelectObject(bitmapDC, sky);
+			HDC hdcMem = CreateCompatibleDC(hdc);
+			HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, sky);
 
-			BitBlt(hdc, 0, 0, width, height, bitmapDC, 0, 0, SRCCOPY);
+			GetObject(sky, sizeof(bm), &bm);
+
+			BitBlt(hdc, 0, 0, bm.bmWidth, bm.bmHeight, hdcMem, 0, 0, SRCCOPY);
 
 			string sas = to_string(LinesVector.size());
 			const char * sos = sas.c_str();
@@ -232,23 +240,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					PolyBezierTo(hdc, arr, temp.size());
 					MoveToEx(hdc, rand() % width + 1, rand() % height + 1, NULL);
 				}
-
-
-				//for (int i = 0; i < arrOfBezierVectors.size(); i++)
-				//{
-				//string size = to_string(arrOfBezierVectors.size());
-				//const char * csize = size.c_str();
-				//MessageBoxA(hwnd, csize, "sas", MB_OK);
-				//	vector<POINT> temp = arrOfBezierVectors[i];
-				//	POINT * arr = &temp[0];
-				//	PolyBezierTo(hdc, arr, arrOfBezierVectors.size());
-				//}
 			}
 			MoveWindow(Button1, 3 * (width / 4), height / 4, 70, 30, TRUE);
 			MoveWindow(Button2, 3 * (width / 4), height / 4 + 35, 70, 30, TRUE);
 
-			DeleteDC(bitmapDC);
-			DeleteObject(sky);
+			SelectObject(hdcMem, hbmOld);
+			DeleteDC(hdcMem);
 
 			EndPaint(hwnd, &ps);
 		}
