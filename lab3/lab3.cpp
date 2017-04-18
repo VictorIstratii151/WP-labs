@@ -151,6 +151,7 @@ POINT ptCurrent;
 
 vector<ListItem> LinesVector;
 vector<vector<POINT>> arrOfBezierVectors;
+vector<Status> statusVector;
 
 COLORREF colour = RGB(0, 0, 0);
 
@@ -206,8 +207,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 			BitBlt(hdc, 0, 0, bm.bmWidth, bm.bmHeight, hdcMem, 0, 0, SRCCOPY);
 
-			OnPaint(hdc);
-
 			if (LinesVector.size() == 5)
 			{
 				MakeLines(hdc, hwnd, LinesVector);
@@ -240,6 +239,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 			SelectObject(hdcMem, hbmOld);
 			DeleteDC(hdcMem);
+
+
+			OnPaint(hdc);			
+			
 
 			EndPaint(hwnd, &ps);
 		}
