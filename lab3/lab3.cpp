@@ -4,14 +4,14 @@
 #include <ctime>
 #include <list>
 #include <vector>
-//#include <gdiplus.h>
+#include <gdiplus.h>
 #include "resource.h"
 #include "listStuff.h"
 #include <string>
 
 using namespace std;
-//using namespace Gdiplus;
-//#pragma comment (lib, "Gdiplus.lib")
+using namespace Gdiplus;
+#pragma comment (lib, "Gdiplus.lib")
 
 void initBezierVector(vector<POINT> &vect, int size, HWND hwnd)
 {
@@ -39,17 +39,12 @@ void MakeLines(HDC hdc, HWND hwnd, vector<ListItem> LinesVector)
 	{
 		ListItem currentElement = LinesVector[i];
 
-		string xinfo2 = to_string(currentElement.xStart);
-		const char * xinfo22 = xinfo2.c_str();
-
 		COLORREF qLineColor = RGB(currentElement.properties.colorA, currentElement.properties.colorB, currentElement.properties.colorC);
 		HPEN hLinePen = CreatePen(PS_SOLID, currentElement.properties.width, qLineColor);
 		hPenOld = (HPEN)SelectObject(hdc, hLinePen);
 
 		MoveToEx(hdc, currentElement.xStart, currentElement.yStart, NULL);
 		LineTo(hdc, currentElement.xEnd, currentElement.yEnd);
-
-		//MessageBoxA(hwnd, xinfo22, "in makelines", MB_OK);
 
 
 		SelectObject(hdc, hPenOld);
@@ -87,6 +82,7 @@ void drawFigures(HWND hwnd)
 	arrow[5].y = 90;
 	arrow[6].x = 20;
 	arrow[6].y = 90;
+
 
 	POINT triangle[3];
 	triangle[0].x = 200;
@@ -194,24 +190,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 			BitBlt(hdc, 0, 0, bm.bmWidth, bm.bmHeight, hdcMem, 0, 0, SRCCOPY);
 
-			string sas = to_string(LinesVector.size());
-			const char * sos = sas.c_str();
-
-
 			if (LinesVector.size() == 5)
 			{
 				MakeLines(hdc, hwnd, LinesVector);
 			}
-			//string size = to_string(arrOfBezierVectors.size());
-			//const char * csize = size.c_str();
-			//MessageBoxA(hwnd, csize, "sas", MB_OK);
 
 			if (arrOfBezierVectors.size() == 2)
 			{
-				/*vector<POINT> temp = arrOfBezierVectors[0];
-				POINT * arr = &temp[0];
-
-				string size = to_string(temp.size());
+				/*string size = to_string(temp.size());
 				const char * csize = size.c_str();
 				MessageBoxA(hwnd, csize, "sas", MB_OK);*/
 
@@ -226,21 +212,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 						arr[i] = temp[i];
 					}
 
-					/*for (int i = 0; i < temp.size(); i++)
-					{
-						string size = to_string(arr[i].x);
-						const char * csize = size.c_str();
-						MessageBoxA(hwnd, csize, "sas", MB_OK);
-					}*/
-
-					string size = to_string(sizeof(arr) / sizeof(arr[0]));
-					const char * csize = size.c_str();
-					//MessageBoxA(hwnd, csize, "sas", MB_OK);
-
 					PolyBezierTo(hdc, arr, temp.size());
 					MoveToEx(hdc, rand() % width + 1, rand() % height + 1, NULL);
 				}
 			}
+
 			MoveWindow(Button1, 3 * (width / 4), height / 4, 70, 30, TRUE);
 			MoveWindow(Button2, 3 * (width / 4), height / 4 + 35, 70, 30, TRUE);
 
@@ -314,11 +290,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 						arrOfBezierVectors.push_back(bezierVector);
 					}
 					vector<POINT> temp = arrOfBezierVectors[0];
-
-					/*string size = to_string(temp.size());
-					const char * csize = size.c_str();
-					MessageBoxA(hwnd, csize, "sas", MB_OK);*/
-
 					InvalidateRect(hwnd, NULL, TRUE);
 				}
 				break;
@@ -336,9 +307,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					{
 						willDraw = TRUE;
 					}
-					/*string size = to_string(willDraw);
-					const char * csize = size.c_str();
-					MessageBoxA(hwnd, csize, "sas", MB_OK);*/
 				}
 				break;
 
@@ -346,7 +314,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				{
 					colour = RGB(255, 255, 255);
 					hpen = CreatePen(PS_SOLID, 10, colour);
-					//SelectObject(hdc, (HBRUSH)GetStockObject(NULL_BRUSH));
 
 					if (willDraw == TRUE)
 					{
@@ -369,8 +336,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			{
 				hdc = GetDC(hwnd);
 
-				/*colour = RGB(255, 0, 0);
-				hpen = CreatePen(PS_SOLID, 5, colour);*/
 				SelectObject(hdc, hpen);
 
 				ptPrevious.x = LOWORD(lParam);
@@ -426,13 +391,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 			DeleteObject(hpen);
 			ReleaseDC(hwnd, hdc);
-			/*if (willDraw == TRUE)
-			{
-				hdc = BeginPaint(hwnd, &ps);
-				MoveToEx(hdc, ptPrevious.x, ptPrevious.y, NULL);
-				LineTo(hdc, ptPrevious.x = LOWORD(lParam), ptPrevious.y = HIWORD(lParam));
-				EndPaint(hwnd, &ps);
-			}*/
 		}
 	break;
 	
@@ -463,6 +421,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	WNDCLASSEX wc;
 	HWND hwnd;
 	MSG Msg;
+	GdiplusStartupInput gdiplusStartupInput;
+	ULONG_PTR gdiplusToken;
+
+	//Init GDIPLUS
+	GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 
 	//Step 1: Registering the Window Class
 	wc.cbSize = sizeof(WNDCLASSEX);
