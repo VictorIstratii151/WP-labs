@@ -4,10 +4,12 @@
 #include <ctime>
 #include <list>
 #include <vector>
-#include <gdiplus.h>
 #include "resource.h"
 #include "listStuff.h"
 #include <string>
+
+#include <objidl.h>
+#include <gdiplus.h>
 
 using namespace std;
 using namespace Gdiplus;
@@ -16,6 +18,14 @@ using namespace Gdiplus;
 void OnPaint(HDC hdc)
 {
 	Graphics graphics(hdc);
+
+	LinearGradientBrush linGrBrush(Point(0, 10), Point(200, 10), Color(255, 255, 0, 0), Color(255, 0, 0, 255));
+
+	Pen pen(&linGrBrush);
+
+	graphics.DrawLine(&pen, 0, 10, 200, 10);
+	graphics.FillEllipse(&linGrBrush, 0, 30, 200, 100);
+	graphics.FillRectangle(&linGrBrush, 0, 155, 500, 30);
 }
 
 void initBezierVector(vector<POINT> &vect, int size, HWND hwnd)
@@ -188,12 +198,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 			hdc = BeginPaint(hwnd, &ps);
 
+
 			HDC hdcMem = CreateCompatibleDC(hdc);
 			HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, sky);
 
 			GetObject(sky, sizeof(bm), &bm);
 
 			BitBlt(hdc, 0, 0, bm.bmWidth, bm.bmHeight, hdcMem, 0, 0, SRCCOPY);
+
+			OnPaint(hdc);
 
 			if (LinesVector.size() == 5)
 			{
