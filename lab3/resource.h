@@ -7,5 +7,7 @@
 #define ID_DRAW_ERASE					40003
 #define ID_DRAW_BEZIER					40004
 
-#define IDC_ERASER					1001
-#define IDC_CRAYON					1002
+#define IDC_ERASER						1001
+#define IDC_CRAYON						1002
+
+#define IDB_SKY							1000001

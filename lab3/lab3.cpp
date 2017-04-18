@@ -123,6 +123,9 @@ void drawFigures(HWND hwnd)
 }
 
 const char g_szClassName[] = "myWindowClass";
+
+HINSTANCE hInstance;
+
 HWND Button1;
 HWND Button2;
 
@@ -145,7 +148,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	PAINTSTRUCT ps;
 	RECT rcClient;
 	HDC hdc = NULL;
+	HDC bitmapDC;
 	HPEN hpen = NULL;
+	HBITMAP sky;
 
 	
 
@@ -174,6 +179,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			int height = rcClient.bottom - rcClient.top;
 
 			hdc = BeginPaint(hwnd, &ps);
+
+			sky = LoadBitmap(hInstance, "You-will-fly-up-into-the-sky.bmp");
+			bitmapDC = CreateCompatibleDC(hdc);
+			SelectObject(bitmapDC, sky);
+
+			BitBlt(hdc, 0, 0, width, height, bitmapDC, 0, 0, SRCCOPY);
 
 			string sas = to_string(LinesVector.size());
 			const char * sos = sas.c_str();
@@ -235,6 +246,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			}
 			MoveWindow(Button1, 3 * (width / 4), height / 4, 70, 30, TRUE);
 			MoveWindow(Button2, 3 * (width / 4), height / 4 + 35, 70, 30, TRUE);
+
+			DeleteDC(bitmapDC);
+			DeleteObject(sky);
 
 			EndPaint(hwnd, &ps);
 		}
