@@ -13,6 +13,11 @@ using namespace std;
 using namespace Gdiplus;
 #pragma comment (lib, "Gdiplus.lib")
 
+void OnPaint(HDC hdc)
+{
+	Graphics graphics(hdc);
+}
+
 void initBezierVector(vector<POINT> &vect, int size, HWND hwnd)
 {
 	RECT rcClient;
