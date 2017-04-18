@@ -334,7 +334,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				case IDC_ERASER:
 				{
 					colour = RGB(255, 255, 255);
-					hpen = CreatePen(PS_SOLID, 5, colour);
+					hpen = CreatePen(PS_SOLID, 10, colour);
 					//SelectObject(hdc, (HBRUSH)GetStockObject(NULL_BRUSH));
 
 					if (willDraw == TRUE)
@@ -399,6 +399,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEMOVE:
 		{
 			hdc = GetDC(hwnd);
+			
 
 			if (isDrawing == TRUE)
 			{
