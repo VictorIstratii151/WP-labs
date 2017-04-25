@@ -140,6 +140,8 @@ HBITMAP sky = NULL;
 
 HWND Button1;
 HWND Button2;
+HWND rectTool;
+HWND ellipseTool;
 
 bool LineDraw = false;
 BOOL willDraw = FALSE;
@@ -185,6 +187,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			int height = rcClient.bottom - rcClient.top;
 			Button1 = CreateWindowEx(NULL, "BUTTON", "Eraser", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 3 * (width / 4), height / 4, 70, 30, hwnd, (HMENU)IDC_ERASER, GetModuleHandle(NULL), NULL);
 			Button2 = CreateWindowEx(NULL, "BUTTON", "Crayon", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 3 * (width / 4), height / 4 + 35, 70, 30, hwnd, (HMENU)IDC_CRAYON, GetModuleHandle(NULL), NULL);
+			/*rectTool = CreateWindowEx(NULL, "BUTTON", "Rectangle",
+				WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX | BS_PUSHLIKE,
+				0, 86, 140, 43,
+				hwnd, (HMENU)IDB_RECTTOOL, GetModuleHandle(NULL), NULL);*/
+			rectTool = CreateWindowEx(NULL, "BUTTON", "Rectangle", WS_VISIBLE | WS_CHILD | BS_CHECKBOX, 0, height / 2, 100, 40, hwnd, (HMENU)IDB_RECTTOOL, GetModuleHandle(NULL), NULL);
+			ellipseTool = CreateWindowEx(NULL, "BUTTON", "Ellipse", WS_VISIBLE | WS_CHILD | BS_CHECKBOX, 0, height / 2 + 45, 100, 40, hwnd, (HMENU)IDB_ELLIPSETOOL, GetModuleHandle(NULL), NULL);
+
 			EndPaint(hwnd, &ps);
 	}
 
@@ -214,10 +223,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 			if (arrOfBezierVectors.size() == 2)
 			{
-				/*string size = to_string(temp.size());
-				const char * csize = size.c_str();
-				MessageBoxA(hwnd, csize, "sas", MB_OK);*/
-
 				for (vector <vector<POINT>> ::iterator it = arrOfBezierVectors.begin(); it != arrOfBezierVectors.end(); ++it)
 				{
 					vector<POINT> temp = *it;
@@ -236,6 +241,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 			MoveWindow(Button1, 3 * (width / 4), height / 4, 70, 30, TRUE);
 			MoveWindow(Button2, 3 * (width / 4), height / 4 + 35, 70, 30, TRUE);
+			MoveWindow(rectTool, 0, height / 2, 100, 40, TRUE);
 
 			SelectObject(hdcMem, hbmOld);
 			DeleteDC(hdcMem);

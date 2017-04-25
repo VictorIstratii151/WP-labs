@@ -11,3 +11,8 @@
 #define IDC_CRAYON						1002
 
 #define IDB_SKY							1000001
+
+#define IDN_CHECKBOX					1000234
+
+#define IDB_RECTTOOL					20001
+#define IDB_ELLIPSETOOL					20002
