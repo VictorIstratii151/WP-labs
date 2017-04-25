@@ -8,7 +8,7 @@
 #include "listStuff.h"
 #include <string>
 #include <tchar.h>
-#include <windowsx.h>
+#include <Windowsx.h>
 
 #include <objidl.h>
 #include <gdiplus.h>
@@ -148,6 +148,8 @@ HWND ellipseTool;
 bool LineDraw = false;
 BOOL willDraw = FALSE;
 BOOL isDrawing = FALSE;
+BOOL penUsed = FALSE;
+BOOL brushUsed = FALSE;
 
 POINT coordinates[5];
 POINT ptPrevious;
@@ -157,7 +159,8 @@ vector<ListItem> LinesVector;
 vector<vector<POINT>> arrOfBezierVectors;
 vector<Status> statusVector;
 
-COLORREF colour = RGB(0, 0, 0);
+COLORREF colour = RGB(255, 255, 255);
+
 
 // Step 4: the Window Procedure
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -167,6 +170,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	HDC hdc = NULL;
 	HDC bitmapDC;
 	HPEN hpen = NULL;
+	HBRUSH hbrush = NULL;
 
 	
 
@@ -189,10 +193,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			int height = rcClient.bottom - rcClient.top;
 			eraserTool = CreateWindowEx(NULL, "BUTTON", "Eraser", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 3 * (width / 4), height / 4, 70, 30, hwnd, (HMENU)IDC_ERASER, GetModuleHandle(NULL), NULL);
 			crayonTool = CreateWindowEx(NULL, "BUTTON", "Crayon", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 3 * (width / 4), height / 4 + 35, 70, 30, hwnd, (HMENU)IDC_CRAYON, GetModuleHandle(NULL), NULL);
-			/*rectTool = CreateWindowEx(NULL, "BUTTON", "Rectangle",
-				WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX | BS_PUSHLIKE,
-				0, 86, 140, 43,
-				hwnd, (HMENU)IDB_RECTTOOL, GetModuleHandle(NULL), NULL);*/
 			rectTool = CreateWindowEx(NULL, "BUTTON", "Rectangle", WS_VISIBLE | WS_CHILD | BS_CHECKBOX, 0, height / 2, 100, 40, hwnd, (HMENU)IDB_RECTTOOL, GetModuleHandle(NULL), NULL);
 			ellipseTool = CreateWindowEx(NULL, "BUTTON", "Ellipse", WS_VISIBLE | WS_CHILD | BS_CHECKBOX, 0, height / 2 + 45, 100, 40, hwnd, (HMENU)IDB_ELLIPSETOOL, GetModuleHandle(NULL), NULL);
 
@@ -327,15 +327,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				case IDC_CRAYON:
 				{
 					colour = RGB(255, 0, 0);
-					hpen = CreatePen(PS_SOLID, 50, colour);
+					//hpen = CreatePen(PS_SOLID, 25, colour);
+					//SelectObject(hdc, hpen);
+
 					if (willDraw == TRUE)
 					{
 						willDraw = FALSE;
 						isDrawing = FALSE;
+						penUsed = FALSE;
 					}
 					else
 					{
 						willDraw = TRUE;
+						penUsed = TRUE;
 					}
 				}
 				break;
@@ -343,29 +347,42 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				case IDC_ERASER:
 				{
 					colour = RGB(255, 255, 255);
+					if (hpen)
+					{
+						DeleteObject(hpen);
+					}
 					hpen = CreatePen(PS_SOLID, 5, colour);
 
 					if (willDraw == TRUE)
 					{
 						willDraw = FALSE;
 						isDrawing = FALSE;
+						penUsed = FALSE;
 					}
 					else
 					{
 						willDraw = TRUE;
+						penUsed = TRUE;
 					}
 				}
 				break;
 
 				case IDB_RECTTOOL:
 				{
+					colour = RGB(255, 0, 0);
 					if (Button_GetCheck(rectTool) == BST_CHECKED)
 					{
 						Button_SetCheck(rectTool, BST_UNCHECKED);
+						willDraw = FALSE;
+						brushUsed = FALSE;
+						isDrawing = FALSE;
 					}
 					else
 					{
 						Button_SetCheck(rectTool, BST_CHECKED);
+						Button_SetCheck(ellipseTool, BST_UNCHECKED);
+						willDraw = TRUE;
+						brushUsed = TRUE;
 					}
 				}
 				break;
@@ -375,10 +392,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					if (Button_GetCheck(ellipseTool) == BST_CHECKED)
 					{
 						Button_SetCheck(ellipseTool, BST_UNCHECKED);
+						brushUsed = FALSE;
 					}
 					else
 					{
 						Button_SetCheck(ellipseTool, BST_CHECKED);
+						Button_SetCheck(rectTool, BST_UNCHECKED);
+						brushUsed = TRUE;
 					}
 				}
 				break;
@@ -391,22 +411,31 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			if (willDraw == TRUE)
 			{
 				hdc = GetDC(hwnd);
-
-				//SelectObject(hdc, hpen);
+				
 
 				ptPrevious.x = LOWORD(lParam);
 				ptPrevious.y = HIWORD(lParam);
 				ptCurrent.x = LOWORD(lParam);
 				ptCurrent.y = HIWORD(lParam);
 
-				if (Button_GetState(eraserTool) == BST_PUSHED)
+				if (penUsed == TRUE)
 				{
+					hpen = CreatePen(PS_SOLID, 5, colour);
 					SelectObject(hdc, hpen);
 					MoveToEx(hdc, ptPrevious.x, ptPrevious.y, NULL);
 					LineTo(hdc, ptPrevious.x, ptPrevious.y);
 				}
-				/*MoveToEx(hdc, ptPrevious.x, ptPrevious.y, NULL);
-				LineTo(hdc, ptPrevious.x, ptPrevious.y);*/
+
+				if (brushUsed == TRUE)
+				{
+					if (Button_GetCheck(rectTool) == BST_CHECKED)
+					{
+						hbrush = CreateSolidBrush(colour);
+						SelectObject(hdc, hbrush);
+						Rectangle(hdc, ptPrevious.x, ptPrevious.y, ptCurrent.x, ptCurrent.y);
+						DeleteBrush(hbrush);
+					}
+				}
 
 				isDrawing = TRUE;
 
@@ -427,7 +456,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				ptCurrent.x = LOWORD(lParam);
 				ptCurrent.y = HIWORD(lParam);
 
-				MoveToEx(hdc, ptPrevious.x, ptPrevious.y, NULL);
+				if (penUsed == TRUE)
+				{
+					MoveToEx(hdc, ptPrevious.x, ptPrevious.y, NULL);
+				}
+				if (brushUsed)
+				{
+
+				}
 			}
 			ReleaseDC(hwnd, hdc);
 			isDrawing = FALSE;
@@ -441,14 +477,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 			if (isDrawing == TRUE)
 			{
-				//hpen = CreatePen(PS_SOLID, 5, colour);
-				SelectObject(hdc, hpen);
+				if (penUsed == TRUE)
+				{
+					hpen = CreatePen(PS_SOLID, 5, colour);
+					SelectObject(hdc, hpen);
 
-				MoveToEx(hdc, ptCurrent.x, ptCurrent.y, NULL);
-				ptCurrent.x = LOWORD(lParam);
-				ptCurrent.y = HIWORD(lParam);
-				LineTo(hdc, ptCurrent.x, ptCurrent.y);
-
+					MoveToEx(hdc, ptCurrent.x, ptCurrent.y, NULL);
+					ptCurrent.x = LOWORD(lParam);
+					ptCurrent.y = HIWORD(lParam);
+					LineTo(hdc, ptCurrent.x, ptCurrent.y);
+				}
 			}
 
 			DeleteObject(hpen);
