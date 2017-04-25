@@ -456,14 +456,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				ptCurrent.x = LOWORD(lParam);
 				ptCurrent.y = HIWORD(lParam);
 
-				if (penUsed == TRUE)
-				{
-					MoveToEx(hdc, ptPrevious.x, ptPrevious.y, NULL);
-				}
-				if (brushUsed)
-				{
-
-				}
+				MoveToEx(hdc, ptPrevious.x, ptPrevious.y, NULL);
 			}
 			ReleaseDC(hwnd, hdc);
 			isDrawing = FALSE;
@@ -486,6 +479,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					ptCurrent.x = LOWORD(lParam);
 					ptCurrent.y = HIWORD(lParam);
 					LineTo(hdc, ptCurrent.x, ptCurrent.y);
+				}
+				
+				if (Button_GetCheck(rectTool) == BST_CHECKED)
+				{
+					hbrush = CreateSolidBrush(colour);
+					SelectObject(hdc, hbrush);
+					ptCurrent.x = LOWORD(lParam);
+					ptCurrent.y = HIWORD(lParam);
+					Rectangle(hdc, ptPrevious.x, ptPrevious.y, ptCurrent.x, ptCurrent.y);
+					DeleteBrush(hbrush);
 				}
 			}
 
