@@ -369,6 +369,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					}
 				}
 				break;
+
+				case IDB_ELLIPSETOOL:
+				{
+					if (Button_GetCheck(ellipseTool) == BST_CHECKED)
+					{
+						Button_SetCheck(ellipseTool, BST_UNCHECKED);
+					}
+					else
+					{
+						Button_SetCheck(ellipseTool, BST_CHECKED);
+					}
+				}
+				break;
 			}
 		}
 	break;
