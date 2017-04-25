@@ -361,7 +361,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				{
 					if (Button_GetCheck(rectTool) == BST_CHECKED)
 					{
-
+						Button_SetCheck(rectTool, BST_UNCHECKED);
+					}
+					else
+					{
+						Button_SetCheck(rectTool, BST_CHECKED);
 					}
 				}
 				break;
