@@ -7,6 +7,8 @@
 #include "resource.h"
 #include "listStuff.h"
 #include <string>
+#include <tchar.h>
+#include <windowsx.h>
 
 #include <objidl.h>
 #include <gdiplus.h>
@@ -242,6 +244,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			MoveWindow(Button1, 3 * (width / 4), height / 4, 70, 30, TRUE);
 			MoveWindow(Button2, 3 * (width / 4), height / 4 + 35, 70, 30, TRUE);
 			MoveWindow(rectTool, 0, height / 2, 100, 40, TRUE);
+			MoveWindow(ellipseTool, 0, height / 2 + 45, 100, 40, TRUE);
 
 			SelectObject(hdcMem, hbmOld);
 			DeleteDC(hdcMem);
@@ -350,6 +353,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					else
 					{
 						willDraw = TRUE;
+					}
+				}
+				break;
+
+				case IDB_RECTTOOL:
+				{
+					if (Button_GetCheck(rectTool) == BST_CHECKED)
+					{
+
 					}
 				}
 				break;
