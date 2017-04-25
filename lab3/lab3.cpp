@@ -330,8 +330,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				case IDC_CRAYON:
 				{
 					colour = RGB(255, 0, 0);
-					//hpen = CreatePen(PS_SOLID, 25, colour);
-					//SelectObject(hdc, hpen);
 
 					if (willDraw == TRUE)
 					{
@@ -505,28 +503,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					ptCurrent.y = HIWORD(lParam);
 					LineTo(hdc, ptCurrent.x, ptCurrent.y);
 				}
-				
-				/*if (Button_GetCheck(ellipseTool) == BST_CHECKED)
-				{
-
-					hbrush = CreateSolidBrush(colour);
-					SelectObject(hdc, hbrush);
-					ptCurrent.x = LOWORD(lParam);
-					ptCurrent.y = HIWORD(lParam);
-					Ellipse(hdc, ptPrevious.x, ptPrevious.y, ptCurrent.x, ptCurrent.y);
-					
-					DeleteBrush(hbrush);
-				}
-
-				if (Button_GetCheck(rectTool) == BST_CHECKED)
-				{
-					hbrush = CreateSolidBrush(colour);
-					SelectObject(hdc, hbrush);
-					ptCurrent.x = LOWORD(lParam);
-					ptCurrent.y = HIWORD(lParam);
-					Rectangle(hdc, ptPrevious.x, ptPrevious.y, ptCurrent.x, ptCurrent.y);
-					DeleteBrush(hbrush);
-				}*/
 			}
 
 			DeleteObject(hpen);
