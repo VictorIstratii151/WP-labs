@@ -140,8 +140,8 @@ const char g_szClassName[] = "myWindowClass";
 HINSTANCE hInstance;
 HBITMAP sky = NULL;
 
-HWND Button1;
-HWND Button2;
+HWND eraserTool;
+HWND crayonTool;
 HWND rectTool;
 HWND ellipseTool;
 
@@ -187,8 +187,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 			int width = rcClient.right - rcClient.left;
 			int height = rcClient.bottom - rcClient.top;
-			Button1 = CreateWindowEx(NULL, "BUTTON", "Eraser", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 3 * (width / 4), height / 4, 70, 30, hwnd, (HMENU)IDC_ERASER, GetModuleHandle(NULL), NULL);
-			Button2 = CreateWindowEx(NULL, "BUTTON", "Crayon", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 3 * (width / 4), height / 4 + 35, 70, 30, hwnd, (HMENU)IDC_CRAYON, GetModuleHandle(NULL), NULL);
+			eraserTool = CreateWindowEx(NULL, "BUTTON", "Eraser", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 3 * (width / 4), height / 4, 70, 30, hwnd, (HMENU)IDC_ERASER, GetModuleHandle(NULL), NULL);
+			crayonTool = CreateWindowEx(NULL, "BUTTON", "Crayon", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 3 * (width / 4), height / 4 + 35, 70, 30, hwnd, (HMENU)IDC_CRAYON, GetModuleHandle(NULL), NULL);
 			/*rectTool = CreateWindowEx(NULL, "BUTTON", "Rectangle",
 				WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX | BS_PUSHLIKE,
 				0, 86, 140, 43,
@@ -241,8 +241,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				}
 			}
 
-			MoveWindow(Button1, 3 * (width / 4), height / 4, 70, 30, TRUE);
-			MoveWindow(Button2, 3 * (width / 4), height / 4 + 35, 70, 30, TRUE);
+			MoveWindow(eraserTool, 3 * (width / 4), height / 4, 70, 30, TRUE);
+			MoveWindow(crayonTool, 3 * (width / 4), height / 4 + 35, 70, 30, TRUE);
 			MoveWindow(rectTool, 0, height / 2, 100, 40, TRUE);
 			MoveWindow(ellipseTool, 0, height / 2 + 45, 100, 40, TRUE);
 
@@ -327,7 +327,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				case IDC_CRAYON:
 				{
 					colour = RGB(255, 0, 0);
-					hpen = CreatePen(PS_SOLID, 5, colour);
+					hpen = CreatePen(PS_SOLID, 50, colour);
 					if (willDraw == TRUE)
 					{
 						willDraw = FALSE;
@@ -343,7 +343,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				case IDC_ERASER:
 				{
 					colour = RGB(255, 255, 255);
-					hpen = CreatePen(PS_SOLID, 10, colour);
+					hpen = CreatePen(PS_SOLID, 5, colour);
 
 					if (willDraw == TRUE)
 					{
@@ -392,15 +392,21 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			{
 				hdc = GetDC(hwnd);
 
-				SelectObject(hdc, hpen);
+				//SelectObject(hdc, hpen);
 
 				ptPrevious.x = LOWORD(lParam);
 				ptPrevious.y = HIWORD(lParam);
 				ptCurrent.x = LOWORD(lParam);
 				ptCurrent.y = HIWORD(lParam);
 
-				MoveToEx(hdc, ptPrevious.x, ptPrevious.y, NULL);
-				LineTo(hdc, ptPrevious.x, ptPrevious.y);
+				if (Button_GetState(eraserTool) == BST_PUSHED)
+				{
+					SelectObject(hdc, hpen);
+					MoveToEx(hdc, ptPrevious.x, ptPrevious.y, NULL);
+					LineTo(hdc, ptPrevious.x, ptPrevious.y);
+				}
+				/*MoveToEx(hdc, ptPrevious.x, ptPrevious.y, NULL);
+				LineTo(hdc, ptPrevious.x, ptPrevious.y);*/
 
 				isDrawing = TRUE;
 
@@ -435,7 +441,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 			if (isDrawing == TRUE)
 			{
-				hpen = CreatePen(PS_SOLID, 5, colour);
+				//hpen = CreatePen(PS_SOLID, 5, colour);
 				SelectObject(hdc, hpen);
 
 				MoveToEx(hdc, ptCurrent.x, ptCurrent.y, NULL);
