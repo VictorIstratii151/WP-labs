@@ -137,6 +137,9 @@ void drawFigures(HWND hwnd)
 
 const char g_szClassName[] = "myWindowClass";
 
+int shapeStartX = 0;
+int shapeStartY = 0;
+
 HINSTANCE hInstance;
 HBITMAP sky = NULL;
 
@@ -389,15 +392,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 				case IDB_ELLIPSETOOL:
 				{
+					colour = RGB(0, 255, 0);
 					if (Button_GetCheck(ellipseTool) == BST_CHECKED)
 					{
 						Button_SetCheck(ellipseTool, BST_UNCHECKED);
+						willDraw = FALSE;
 						brushUsed = FALSE;
+						isDrawing = FALSE;
 					}
 					else
 					{
 						Button_SetCheck(ellipseTool, BST_CHECKED);
 						Button_SetCheck(rectTool, BST_UNCHECKED);
+						willDraw = TRUE;
 						brushUsed = TRUE;
 					}
 				}
@@ -457,6 +464,24 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				ptCurrent.y = HIWORD(lParam);
 
 				MoveToEx(hdc, ptPrevious.x, ptPrevious.y, NULL);
+
+				if (Button_GetCheck(ellipseTool) == BST_CHECKED)
+				{
+
+					hbrush = CreateSolidBrush(colour);
+					SelectObject(hdc, hbrush);
+					Ellipse(hdc, ptPrevious.x, ptPrevious.y, ptCurrent.x, ptCurrent.y);
+
+					DeleteBrush(hbrush);
+				}
+
+				if (Button_GetCheck(rectTool) == BST_CHECKED)
+				{
+					hbrush = CreateSolidBrush(colour);
+					SelectObject(hdc, hbrush);
+					Rectangle(hdc, ptPrevious.x, ptPrevious.y, ptCurrent.x, ptCurrent.y);
+					DeleteBrush(hbrush);
+				}
 			}
 			ReleaseDC(hwnd, hdc);
 			isDrawing = FALSE;
@@ -465,8 +490,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 	case WM_MOUSEMOVE:
 		{
+			InvalidateRect(hwnd, &rcClient, TRUE);
 			hdc = GetDC(hwnd);
-			
 
 			if (isDrawing == TRUE)
 			{
@@ -481,6 +506,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					LineTo(hdc, ptCurrent.x, ptCurrent.y);
 				}
 				
+				/*if (Button_GetCheck(ellipseTool) == BST_CHECKED)
+				{
+
+					hbrush = CreateSolidBrush(colour);
+					SelectObject(hdc, hbrush);
+					ptCurrent.x = LOWORD(lParam);
+					ptCurrent.y = HIWORD(lParam);
+					Ellipse(hdc, ptPrevious.x, ptPrevious.y, ptCurrent.x, ptCurrent.y);
+					
+					DeleteBrush(hbrush);
+				}
+
 				if (Button_GetCheck(rectTool) == BST_CHECKED)
 				{
 					hbrush = CreateSolidBrush(colour);
@@ -489,7 +526,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					ptCurrent.y = HIWORD(lParam);
 					Rectangle(hdc, ptPrevious.x, ptPrevious.y, ptCurrent.x, ptCurrent.y);
 					DeleteBrush(hbrush);
-				}
+				}*/
 			}
 
 			DeleteObject(hpen);
