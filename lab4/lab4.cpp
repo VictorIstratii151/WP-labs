@@ -2,6 +2,28 @@
 
 const char g_szClassName[] = "myWindowClass";
 
+const int ID_TIMER = 1;
+
+const int BALL_MOVE_DELTA = 2;
+
+typedef struct _BALLINFO
+{
+	int width;
+	int height;
+	int x;
+	int y;
+
+	int dx;
+	int dy;
+}BALLINFO;
+
+typedef struct __BALL
+{
+	BALLINFO g_ballInfo;
+	HBITMAP g_hbmBall;
+	HBITMAP g_hbmMask;
+}BALL;
+
 // Step 4: the Window Procedure
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {

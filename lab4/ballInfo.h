@@ -1,30 +1,35 @@
 #pragma once
+#ifndef BALLINFO_H
+#define BALLINFO_H
+#include <windows.h>
 
-typedef struct _BALLINFO
+class BallInfo
 {
+public:
 	int width;
 	int height;
-	int x;
-	int y;
-	int centerX;
-	int centerY;
+	POINT center;
+	POINT delta;
 
-	int dx;
-	int dy;
-
-	int moving_delta;
-
-	struct _BALLINFO initBall(int w, int h, int _x, int _y, int _centerX, int _centerY, int _dx, int _dy, int delta)
+	BallInfo()
 	{
-		width = w;
-		height = h;
-		x = _x;
-		y = _y;
-		centerX = _centerX;
-		centerY = _centerY;
-		dx = _dx;
-		dy = _dy;
-		moving_delta = delta;
+		width = 0;
+		height = 0;
+		center.x = 0;
+		center.y = 0;
+		delta.x = 0;
+		delta.y = 0;
 	}
-}BALLINFO;
+
+	BallInfo(int w, int h, int cx, int cy, int dx, int dy) : width(w), height(h)
+	{
+		center.x = cx;
+		center.y = cy;
+		delta.x = dx;
+		delta.y = dy;
+	}
+
+};
+
+#endif
 
