@@ -38,17 +38,20 @@ void MovingObject::collision(RECT rcClient)
 	{
 		squareCheck = TRUE;
 		delta.x = -abs(delta.x);
+		idHitObj = 1001;
 	}
 	if (center.x - 25 < rcClient.left + 1)
 	{
 		squareCheck = TRUE;
 		delta.x = abs(delta.x);
+		idHitObj = 1001;
 	}
 	if (center.y + 25 > rcClient.bottom - 1)
 	{
 		squareCheck = FALSE;
 		acceleration += 1;
 		delta.y = -abs(delta.y);
+		idHitObj = 1001;
 
 	}
 	if (center.y - 25 < rcClient.top + 10)
@@ -56,9 +59,8 @@ void MovingObject::collision(RECT rcClient)
 		acceleration += 1;
 		squareCheck = FALSE;
 		delta.y = abs(delta.y);
+		idHitObj = 1001;
 	}
-
-	idHitObj = 1001;
 }
 
 void MovingObject::alterDirection(MovingObject obj)
@@ -87,7 +89,6 @@ void MovingObject::alterDirection(MovingObject obj)
 
 void interaction(MovingObject & a, MovingObject &b)
 {
-	int sign[] = { -1, 1 };
 	if (!(a.idHitObj == b.idObj && a.idObj == b.idHitObj))
 	{
 		int R = rand() % 256;

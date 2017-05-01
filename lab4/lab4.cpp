@@ -3,9 +3,12 @@
 #include "resource.h"
 #include "objInfo.h"
 
+using namespace std;
+
 const char g_szClassName[] = "myWindowClass";
 
-std::vector<MovingObject *> objects;
+
+MovingObject * objects[1000];
 
 int objectNumber = 0;
 int tempNumber = 0;
@@ -49,19 +52,74 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			GetClientRect(hwnd, &rcClient);
 			FillRect(hdcMEM, &rcClient, (HBRUSH)GetStockObject(WHITE_BRUSH));
 
+			for (int i = 0; i < objectNumber; i++)
+			{
+				objects[i]->move(hdcMEM, rcClient);
+			}
+
+			for (int i = 0; i < objectNumber - 1; i++)
+			{
+				for (int j = i + 1; j < objectNumber; j++)
+				{
+					interaction(*objects[i], *objects[j]);
+				}
+			}
+
+			for (int i = 0; i < tempNumber; i++)
+			{
+				int R = rand() % 256;
+				int G = rand() % 256;
+				int B = rand() % 256;
+
+				if (objects[i]->multiplied == 1)
+				{
+					POINT center2 = objects[i]->center;
+
+					if (objects[i]->delta.x > 0 & objects[i]->delta.y < 0)
+					{
+						center2.x -= 50;
+						center2.y -= 50;
+					}
+					else if (objects[i]->delta.x > 0 & objects[i]->delta.y > 0)
+					{
+						center2.x += 50;
+						center2.y -= 50;
+					}
+					else if (objects[i]->delta.x < 0 & objects[i]->delta.y > 0)
+					{
+						center2.x += 50;
+						center2.y += 50;
+					}
+					else if (objects[i]->delta.x < 0 & objects[i]->delta.y < 0)
+					{
+						center2.x -= 50;
+						center2.y += 50;
+					}
+
+					POINT newSpeed;
+					newSpeed.x = 1;
+					newSpeed.y = 1;
+
+					objects[objectNumber] = new MovingObject(center2, newSpeed, RGB(R, G, B), objectNumber);
+					objects[objectNumber]->idHitObj = i;
+					objects[objectNumber]->alterDirection(*objects[i]);
+					objects[objectNumber]->multiplied = 3;
+					objects[i]->multiplied = 3;
+					objectNumber += 1;
+				}
+			}
+			
+			BitBlt(hdc, 0, 0, rcClient.right, rcClient.bottom, hdcMEM, 0, 0, SRCCOPY);
+
 			EndPaint(hwnd, &ps);
 		}
 		break;
 
 		case WM_TIMER:
 		{
-			RECT rcClient;
-			HDC hdc = GetDC(hwnd);
-
-			GetClientRect(hwnd, &rcClient);
-
-			ReleaseDC(hwnd, hdc);
+			InvalidateRect(hwnd, &rcClient, NULL);
 		}
+		break;
 
 		case WM_HOTKEY:
 		{
@@ -88,7 +146,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 						return 0;
 					}
 
-					objects.push_back(new MovingObject(coord, initialSpeed, RGB(R, G, B), objectNumber));
+					objects[objectNumber] = new MovingObject(coord, initialSpeed, RGB(R, G, B), objectNumber);
 					objectNumber += 1;
 					tempNumber = objectNumber;
 				}
