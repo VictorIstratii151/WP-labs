@@ -1,10 +1,7 @@
 #include <windows.h>
+#include "resource.h"
 
 const char g_szClassName[] = "myWindowClass";
-
-const int ID_TIMER = 1;
-
-const int BALL_MOVE_DELTA = 2;
 
 typedef struct _BALLINFO
 {
@@ -27,8 +24,24 @@ typedef struct __BALL
 // Step 4: the Window Procedure
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+	static RECT rcClient;
+	static HBITMAP hbmMEM;
+	static HDC hdcMEM;
+	static HDC hdc;
+	static int timer_speed = 1;
 	switch (msg)
 	{
+		case WM_CREATE:
+		{
+			hdc = GetDC(hwnd);
+			GetClientRect(hwnd, &rcClient);
+			hdcMEM = CreateCompatibleDC(hdc);
+			hbmMEM = CreateCompatibleBitmap(hdc, rcClient.right, rcClient.bottom);
+			SelectObject(hdcMEM, hbmMEM);
+			
+			SetTimer(hwnd, ID_TIMER, timer_speed, NULL);
+
+		}
 		case WM_CLOSE:
 		{
 			DestroyWindow(hwnd);
