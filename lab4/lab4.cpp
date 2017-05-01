@@ -115,6 +115,32 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 
+		case WM_MOUSEWHEEL:
+		{
+			if ((short)HIWORD(wParam) > 0)
+			{
+				for (int i = 0; i < objectNumber; i++)
+				{
+					if (objects[i]->acceleration < 11)
+					{
+						objects[i]->acceleration += 1;
+					}
+				}
+				
+			}
+			else if ((short)HIWORD(wParam) < 0)
+			{
+				for (int i = 0; i < objectNumber; i++)
+				{
+					if (objects[i]->acceleration > -1)
+					{
+						objects[i]->acceleration -= 1;
+					}
+				}
+			}
+		}
+		break;
+
 		case WM_TIMER:
 		{
 			InvalidateRect(hwnd, &rcClient, NULL);
