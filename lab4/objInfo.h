@@ -2,6 +2,7 @@
 #ifndef OBJINFO_H
 #define OBJINFO_H
 #include <windows.h>
+#include <cmath>
 
 class MovingObject
 {

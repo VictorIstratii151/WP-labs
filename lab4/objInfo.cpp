@@ -36,19 +36,16 @@ void MovingObject::collision(RECT rcClient)
 {
 	if (center.x + 25 > rcClient.right - 1)
 	{
-		idHitObj = 1001;
 		squareCheck = TRUE;
 		delta.x = -abs(delta.x);
 	}
 	if (center.x - 25 < rcClient.left + 1)
 	{
 		squareCheck = TRUE;
-		idHitObj = 1001;
 		delta.x = abs(delta.x);
 	}
 	if (center.y + 25 > rcClient.bottom - 1)
 	{
-		idHitObj = 1001;
 		squareCheck = FALSE;
 		acceleration += 1;
 		delta.y = -abs(delta.y);
@@ -58,7 +55,68 @@ void MovingObject::collision(RECT rcClient)
 	{
 		acceleration += 1;
 		squareCheck = FALSE;
-		idHitObj = 1001;
 		delta.y = abs(delta.y);
+	}
+
+	idHitObj = 1001;
+}
+
+void MovingObject::alterDirection(MovingObject obj)
+{
+	if (obj.delta.x > 0 && obj.delta.y < 0)
+	{
+		delta.x = abs(delta.x);
+		delta.y = abs(delta.y);
+	}
+	else if (obj.delta.x > 0 && obj.delta.y > 0)
+	{
+		delta.x = abs(delta.x);
+		delta.y = -abs(delta.y);
+	}
+	else if (obj.delta.x < 0 && obj.delta.x > 0)
+	{
+		delta.x = -abs(delta.x);
+		delta.y = -abs(delta.y);
+	}
+	else if (obj.delta.x < 0 && obj.delta.y < 0)
+	{
+		delta.x = -abs(delta.x);
+		delta.y = abs(delta.y);
+	}
+}
+
+void interaction(MovingObject & a, MovingObject &b)
+{
+	int sign[] = { -1, 1 };
+	if (!(a.idHitObj == b.idObj && a.idObj == b.idHitObj))
+	{
+		int R = rand() % 256;
+		int G = rand() % 256;
+		int B = rand() % 256;
+		int R_2 = rand() % 256;
+		int G_2 = rand() % 256;
+		int B_2 = rand() % 256;
+
+		int distance = sqrt(pow(abs(b.center.x - a.center.x), 2) + pow(abs(b.center.y - a.center.y), 2));
+		if (distance <= 45)
+		{
+			if (a.squareCheck & b.squareCheck || !a.squareCheck & !b.squareCheck)
+			{
+				a.color = RGB(R, G, B);
+				b.color = RGB(R_2, G_2, B_2);
+				if (a.multiplied == 0)
+					a.multiplied = 1;
+				if (b.multiplied == 0)
+					b.multiplied = 1;
+			}
+
+			a.idHitObj = b.idObj;
+			b.idHitObj = a.idObj;
+			a.delta.x = -a.delta.x;
+			a.delta.y = -a.delta.y;
+
+			b.delta.x = -b.delta.x;
+			b.delta.y = -b.delta.y;
+		}
 	}
 }
