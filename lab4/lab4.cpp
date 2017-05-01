@@ -1,26 +1,14 @@
 #include <windows.h>
+#include <vector>
 #include "resource.h"
+#include "objInfo.h"
 
 const char g_szClassName[] = "myWindowClass";
 
+std::vector<MovingObject>;
 
-typedef struct _BALLINFO
-{
-	int width;
-	int height;
-	int x;
-	int y;
-
-	int dx;
-	int dy;
-}BALLINFO;
-
-typedef struct __BALL
-{
-	BALLINFO g_ballInfo;
-	HBITMAP g_hbmBall;
-	HBITMAP g_hbmMask;
-}BALL;
+int objectNumber = 0;
+int tempNumber = 0;
 
 // Step 4: the Window Procedure
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -30,15 +18,22 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	static HDC hdcMEM;
 	static HDC hdc;
 	static int timer_speed = 1;
+	PAINTSTRUCT ps;
+
+	srand(GetTickCount());
+
 	switch (msg)
 	{
 		case WM_CREATE:
 		{
 			hdc = GetDC(hwnd);
+
 			GetClientRect(hwnd, &rcClient);
 			hdcMEM = CreateCompatibleDC(hdc);
 			hbmMEM = CreateCompatibleBitmap(hdc, rcClient.right, rcClient.bottom);
 			SelectObject(hdcMEM, hbmMEM);
+
+			ReleaseDC(hwnd, hdc);
 			
 			SetTimer(hwnd, ID_TIMER, timer_speed, NULL);
 
@@ -47,13 +42,34 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 
+		case WM_PAINT:
+		{
+			hdc = BeginPaint(hwnd, &ps);
+
+			GetClientRect(hwnd, &rcClient);
+			FillRect(hdcMEM, &rcClient, (HBRUSH)GetStockObject(WHITE_BRUSH));
+
+			EndPaint(hwnd, &ps);
+		}
+		break;
+
+		case WM_TIMER:
+		{
+			RECT rcClient;
+			HDC hdc = GetDC(hwnd);
+
+			GetClientRect(hwnd, &rcClient);
+
+			ReleaseDC(hwnd, hdc);
+		}
+
 		case WM_HOTKEY:
 		{
 			switch(wParam)
 			{
 				case HK_ADD:
 				{
-
+					PostQuitMessage(0);
 				}
 				break;
 
