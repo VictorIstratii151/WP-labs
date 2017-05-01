@@ -3,6 +3,7 @@
 
 const char g_szClassName[] = "myWindowClass";
 
+
 typedef struct _BALLINFO
 {
 	int width;
