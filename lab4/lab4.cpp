@@ -5,7 +5,7 @@
 
 const char g_szClassName[] = "myWindowClass";
 
-std::vector<MovingObject>;
+std::vector<MovingObject *> objects;
 
 int objectNumber = 0;
 int tempNumber = 0;
@@ -38,7 +38,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			SetTimer(hwnd, ID_TIMER, timer_speed, NULL);
 
 			RegisterHotKey(hwnd, HK_ADD, MOD_CONTROL, VK_UP);
-			RegisterHotKey(hwnd, HK_ADD, MOD_CONTROL, VK_DOWN);
+			RegisterHotKey(hwnd, HK_DELETE, MOD_CONTROL, VK_DOWN);
 		}
 		break;
 
@@ -69,8 +69,28 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			{
 				case HK_ADD: // ctrl + up
 				{
-					DestroyWindow(hwnd);
-					PostQuitMessage(0);
+
+					static POINT coord;
+					POINT initialSpeed;
+					initialSpeed.x = 1;
+					initialSpeed.y = 1;
+					coord.x = LOWORD(lParam);
+					coord.y = HIWORD(lParam);
+
+					int R = rand() % 256;
+					int G = rand() % 256;
+					int B = rand() % 256;
+
+					if (objectNumber == 20)
+					{
+						MessageBox(NULL, "Maximum number of objects on the screen!", "Epilepsy warning!",
+							MB_ICONEXCLAMATION | MB_OK);
+						return 0;
+					}
+
+					objects.push_back(new MovingObject(coord, initialSpeed, RGB(R, G, B), objectNumber));
+					objectNumber += 1;
+					tempNumber = objectNumber;
 				}
 				break;
 
