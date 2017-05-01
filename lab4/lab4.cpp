@@ -38,7 +38,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			SetTimer(hwnd, ID_TIMER, timer_speed, NULL);
 
 			RegisterHotKey(hwnd, HK_ADD, MOD_CONTROL, VK_UP);
-
+			RegisterHotKey(hwnd, HK_ADD, MOD_CONTROL, VK_DOWN);
 		}
 		break;
 
@@ -67,11 +67,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		{
 			switch(wParam)
 			{
-				case HK_ADD:
+				case HK_ADD: // ctrl + up
 				{
+					DestroyWindow(hwnd);
 					PostQuitMessage(0);
 				}
 				break;
+
+				case HK_DELETE: // ctrl + down
+				{
+					DestroyWindow(hwnd);
+					PostQuitMessage(0);
+				}
 
 				default:
 				{
