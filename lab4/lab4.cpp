@@ -41,7 +41,29 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			
 			SetTimer(hwnd, ID_TIMER, timer_speed, NULL);
 
+			RegisterHotKey(hwnd, HK_ADD, MOD_CONTROL, VK_UP);
+
 		}
+		break;
+
+		case WM_HOTKEY:
+		{
+			switch(wParam)
+			{
+				case HK_ADD:
+				{
+
+				}
+				break;
+
+				default:
+				{
+					break;
+				}
+			}
+		}
+		break;
+
 		case WM_CLOSE:
 		{
 			DestroyWindow(hwnd);
